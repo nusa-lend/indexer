@@ -1,0 +1,29 @@
+{
+  "name": "lending-indexer",
+  "version": "0.1.0",
+  "description": "Cross-chain lending protocol indexer powered by Ponder.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node scripts/dbSetup.js && ponder dev",
+    "start": "node scripts/dbSetup.js && ponder start",
+    "codegen": "ponder codegen",
+    "typecheck": "tsc --noEmit",
+    "db:setup": "node scripts/dbSetup.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "drizzle-kit": "0.22.8",
+    "hono": "^4.5.0",
+    "ponder": "^0.13.6",
+    "postgres": "^3.4.3",
+    "viem": "^2.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "prettier": "^3.3.3"
+  }
+}

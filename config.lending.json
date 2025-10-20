@@ -1,0 +1,286 @@
+{
+  "chains": [
+    {
+      "name": "arbitrum",
+      "chainId": 42161,
+      "rpcUrlEnvVar": "ARBITRUM_RPC_URL",
+      "contracts": {
+        "tokenDataStream": {
+          "address": "0xC0473BD9e466A7E564b9f1A0065f1eFa41966D54",
+          "startBlock": 390474801
+        },
+        "router": {
+          "address": "0xcC0563F952FADb3a7D54A448AEB079D7d8F849fa",
+          "startBlock": 390794093
+        },
+        "isHealthy": {
+          "address": "0x9383C92c309c4Db56Fa3Ee57a9Eb7ED8c5edDa22",
+          "startBlock": 390474868
+        },
+        "proxy": {
+          "address": "0x7FB63D9Faf99A34bCA04EFd5BA7F75dC6DB37f4D",
+          "startBlock": 390474884
+        },
+        "lendingPool": {
+          "address": "0x2099FDE6100bd4B7a5004a1aE4077bE9469984A8",
+          "startBlock": 391517397
+        },
+        "oAppBorrow": {
+          "address": "0x8868E3511c2C47AC55106C21f958E6Cf1Cbc1766",
+          "startBlock": 391514143
+        },
+        "tokens": [
+          {
+            "symbol": "USDC",
+            "address": "0xC23e60Ac84240ffCe72680652515dfb1435C356b",
+            "startBlock": 390474780,
+            "decimals": 6,
+            "collateralFactorBps": 9000
+          },
+          {
+            "symbol": "WETH",
+            "address": "0x338802B73DA88D05e1b3A0203092AD43807049Be",
+            "startBlock": 390474787,
+            "decimals": 18,
+            "collateralFactorBps": 8000
+          },
+          {
+            "symbol": "WBTC",
+            "address": "0xF1839107BECE28De0e83c92911434a18293B45A4",
+            "startBlock": 390474794,
+            "decimals": 8,
+            "collateralFactorBps": 7000
+          },
+          {
+            "symbol": "CADC",
+            "address": "0x99d19F4Cb938E0aAD646358c20cB9D0CE0A7a945",
+            "startBlock": 391522593,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0x2b4c8a6171eff27905A8490E4cdB711bc0AC77cb",
+            "oracleStartBlock": 391525560
+          },
+          {
+            "symbol": "CNGN",
+            "address": "0xA0F8C84E78eabDF241A9fA9Ff6733AB17bB4E7FA",
+            "startBlock": 391522593,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0x93c1b89D8F71E4688dEBDb688347A04eD91cfddd",
+            "oracleStartBlock": 391525570
+          },
+          {
+            "symbol": "KRWT",
+            "address": "0x0B214413CAc3E0B8F356181d7339626FCafff6Bd",
+            "startBlock": 391522593,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0xb543ffEF66c25409eA63Dc07352960f06Ce564c7",
+            "oracleStartBlock": 391525577
+          },
+          {
+            "symbol": "TRYB",
+            "address": "0xa7f56bc3252c676E43Ff1F3e6780Dbbc7679D7a6",
+            "startBlock": 391522593,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xf0B69ea67Ea6a8C7BE111B73f791ab25C386CaD3",
+            "oracleStartBlock": 391525584
+          },
+          {
+            "symbol": "MXNE",
+            "address": "0x14954b6a207A4CC908f44354e61997070507fCC4",
+            "startBlock": 391522593,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xC469d792421CD0eF585eab54EF93a6bF4623455E",
+            "oracleStartBlock": 391525591
+          },
+          {
+            "symbol": "XSGD",
+            "address": "0x1aA55163E448b100ac4541C69cf2b55C909A2bE9",
+            "startBlock": 391522593,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xD0A899a8Fe186D0c3beBD8A45a41cfbC30931105",
+            "oracleStartBlock": 391525597
+          },
+          {
+            "symbol": "ZARP",
+            "address": "0x623Cf9E33F269Fd459467E98a5e12Db4C2FBCAe0",
+            "startBlock": 391522593,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0xaaeF30A81c653520Ca5F43dea55b2d1E884946c0",
+            "oracleStartBlock": 391525606
+          },
+          {
+            "symbol": "IDRX",
+            "address": "0xB4626C50fb6A0019FEECD442310cd1F7395e2148",
+            "startBlock": 391522593,
+            "decimals": 2,
+            "collateralFactorBps": 9000,
+            "oracle": "0x15118b3d806b68aa5564A89f5f88C7DF9A8c6346",
+            "oracleStartBlock": 391525612
+          },
+          {
+            "symbol": "EURC",
+            "address": "0x8d55C23664B46212bC6dC03d03E237988c0d3646",
+            "startBlock": 391522593,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xd50ee02F3BB2B4530C5FFB7df3284C9f2090b517",
+            "oracleStartBlock": 391525620
+          }
+        ]
+      },
+      "interestModel": {
+        "borrowBaseRateBps": 0,
+        "borrowSlopeRateBps": 5000,
+        "reserveFactorBps": 1000,
+        "compoundsPerYear": 365
+      }
+    },
+    {
+      "name": "base",
+      "chainId": 8453,
+      "rpcUrlEnvVar": "BASE_RPC_URL",
+      "contracts": {
+        "tokenDataStream": {
+          "address": "0xB113959014d95C555B8A908D794e73478e5509A8",
+          "startBlock": 36879070
+        },
+        "router": {
+          "address": "0x23c5462BcD096AbFdFe9A845A9E1Ec06bEa3F81B",
+          "startBlock": 36996045
+        },
+        "isHealthy": {
+          "address": "0x9EDF457dB4C061E22CD87d3E4a886CeA967b629B",
+          "startBlock": 36879071
+        },
+        "proxy": {
+          "address": "0xC60D72c8Cb53842f15cfFa8A0bb9DbC759E44452",
+          "startBlock": 36879071
+        },
+        "lendingPool": {
+          "address": "0xCcc8E12AAf28D69a865e0B93a99fF490f30f9Df2",
+          "startBlock": 37087137
+        },
+        "oAppBorrow": {
+          "address": "0xC469d792421CD0eF585eab54EF93a6bF4623455E",
+          "startBlock": 37086766
+        },
+        "tokens": [
+          {
+            "symbol": "USDC",
+            "address": "0xe3BaB20B2711e0577C46d14fd10bfFC0961036C3",
+            "startBlock": 36879070,
+            "decimals": 6,
+            "collateralFactorBps": 9000
+          },
+          {
+            "symbol": "WETH",
+            "address": "0xE29A9fBdf3d83c126C6366D7f401473Ab0850e7F",
+            "startBlock": 36879070,
+            "decimals": 18,
+            "collateralFactorBps": 8000
+          },
+          {
+            "symbol": "WBTC",
+            "address": "0xEF0CeF5eB4F2B475b00C9Cae5E58065f9f5062E8",
+            "startBlock": 36879070,
+            "decimals": 8,
+            "collateralFactorBps": 7000
+          },
+          {
+            "symbol": "CADC",
+            "address": "0xca03A4dFE09f664890ee7B46D9Af4F0B6d5f6f15",
+            "startBlock": 37087631,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0x7B7a330EdC927CD77b41c198ac4fE25A6B5c2C3b",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "CNGN",
+            "address": "0xED6Cfb1D2F61F75419BaB537Ca1C5351B6a4c017",
+            "startBlock": 37087631,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xEDa712E6D5F0C989e9bdeEb8dadB2F4B4F54ACC5",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "KRWT",
+            "address": "0xD773084B8Cd424AD87D35bE6901255feE285A763",
+            "startBlock": 37087631,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0x43Db7FF630c993f080f315007961756f2b96Fa45",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "TRYB",
+            "address": "0x1D7c9083d76aD235aE44d90Bc13EcA74Ccc2Ed42",
+            "startBlock": 37087631,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0x2F7c95D1848cb0a5E36DE0D4Db04C4aFe09053dD",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "MXNE",
+            "address": "0xB7e6d4119F5E482D8d68D0AA4c81F14A082Ec917",
+            "startBlock": 37087631,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0x618942aF15f2Fe6F451bEe0E094D46df39822e74",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "XSGD",
+            "address": "0xef49434AcC92ED24e7d245f748aacDE471A68F06",
+            "startBlock": 37087631,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xBf374ffDde61Ebf4e19dC0320BD2DeD9De447EB4",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "ZARP",
+            "address": "0x5F01296847f20Fc68C79D051AB75Fb9169096F00",
+            "startBlock": 37087631,
+            "decimals": 18,
+            "collateralFactorBps": 9000,
+            "oracle": "0x88D873c00658874996E07E98E84fF89C3Aa314c1",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "IDRX",
+            "address": "0x74Ae55CA4EaA2337f309F77A7AF1b60Ea9085FB6",
+            "startBlock": 37087631,
+            "decimals": 2,
+            "collateralFactorBps": 9000,
+            "oracle": "0x7E588B76807B0ADF014c4ceA3d9DF28d4C5E7c80",
+            "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "EURC",
+            "address": "0xB2B60Bb1e9796cAE4Dc4c87f456db675871b0d2B",
+            "startBlock": 37087631,
+            "decimals": 6,
+            "collateralFactorBps": 9000,
+            "oracle": "0xc75DE9a3c001f6e5f45fb44a11fa7d92E82BAc0E",
+            "oracleStartBlock": 37088282
+          }
+        ]
+      },
+      "interestModel": {
+        "borrowBaseRateBps": 0,
+        "borrowSlopeRateBps": 5000,
+        "reserveFactorBps": 1000,
+        "compoundsPerYear": 365
+      }
+    }
+  ]
+}

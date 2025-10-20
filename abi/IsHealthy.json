@@ -1,0 +1,88 @@
+[
+  { "inputs": [{ "internalType": "address", "name": "_router", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "borrowValue", "type": "uint256" },
+      { "internalType": "uint256", "name": "collateralValue", "type": "uint256" },
+      { "internalType": "uint256", "name": "maxBorrow", "type": "uint256" }
+    ],
+    "name": "InsufficientCollateral",
+    "type": "error"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "ltv", "type": "uint256" }],
+    "name": "InvalidLtv",
+    "type": "error"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "ltv", "type": "uint256" },
+      { "internalType": "address", "name": "user", "type": "address" },
+      { "internalType": "address", "name": "borrowToken", "type": "address" },
+      { "internalType": "address[]", "name": "tokens", "type": "address[]" },
+      { "internalType": "uint256[]", "name": "chainIds", "type": "uint256[]" },
+      { "internalType": "uint256", "name": "totalBorrowAssets", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalBorrowShares", "type": "uint256" },
+      { "internalType": "uint256", "name": "userBorrowShares", "type": "uint256" },
+      { "internalType": "address", "name": "lendingPool", "type": "address" }
+    ],
+    "name": "isHealthy",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "router",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "_router", "type": "address" }],
+    "name": "setRouter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
