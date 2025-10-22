@@ -6,7 +6,12 @@ import schema, { positions as positionsTable } from "ponder:schema";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 import { roles } from "./roles/roles.js";
-import { positionId as makePositionId } from "../lib/ids";
+import {
+  positionId as makePositionId,
+  marketId as makeMarketId,
+  splitTokenId,
+} from "../lib/ids";
+import { ratioRay, textToBigint, bigintToText } from "../lib/math";
 
 const app = new Hono();
 
@@ -102,6 +107,7 @@ type PositionBucket = {
   entries: Array<{
     type: "supply_collateral" | "supply_liquidity" | "borrow";
     tokenId: string;
+    marketId: string;
     amount: bigint;
     usdValueRay: string;
     updatedAtBlock: bigint;
@@ -243,6 +249,8 @@ app.get("/positions", async (c) => {
 
     const buckets = new Map<string, PositionBucket>();
     const orderedPositionIds: string[] = [];
+    const referencedTokenIds = new Set<string>();
+    const referencedMarketIds = new Set<string>();
 
     for (const position of positions) {
       const positionCopy: PositionRow = { ...position };
@@ -252,9 +260,14 @@ app.get("/positions", async (c) => {
 
     for (const collateral of collaterals) {
       const bucket = ensureBucket(buckets, collateral.positionId);
+      const { address } = splitTokenId(collateral.tokenId);
+      const marketId = makeMarketId(bucket.position.chainId, address);
+      referencedTokenIds.add(collateral.tokenId);
+      referencedMarketIds.add(marketId);
       bucket.entries.push({
         type: "supply_collateral",
         tokenId: collateral.tokenId,
+        marketId,
         amount: collateral.amount,
         usdValueRay: collateral.usdValueRay,
         updatedAtBlock: collateral.updatedAtBlock,
@@ -265,9 +278,14 @@ app.get("/positions", async (c) => {
 
     for (const debt of debts) {
       const bucket = ensureBucket(buckets, debt.positionId);
+      const { address } = splitTokenId(debt.tokenId);
+      const marketId = makeMarketId(bucket.position.chainId, address);
+      referencedTokenIds.add(debt.tokenId);
+      referencedMarketIds.add(marketId);
       bucket.entries.push({
         type: "borrow",
         tokenId: debt.tokenId,
+        marketId,
         amount: debt.amount,
         usdValueRay: debt.usdValueRay,
         updatedAtBlock: debt.updatedAtBlock,
@@ -288,9 +306,12 @@ app.get("/positions", async (c) => {
           updatedAtTimestamp: entry.updatedAtTimestamp,
         }),
       );
+      referencedTokenIds.add(entry.tokenId);
+      referencedMarketIds.add(entry.marketId);
       bucket.entries.push({
         type: "supply_liquidity",
         tokenId: entry.tokenId,
+        marketId: entry.marketId,
         amount: entry.amount,
         usdValueRay: entry.usdValueRay,
         updatedAtBlock: entry.updatedAtBlock,
@@ -305,13 +326,67 @@ app.get("/positions", async (c) => {
     const seen = new Set<string>();
     const response = [];
 
+    const marketRows =
+      referencedMarketIds.size > 0
+        ? await db.query.markets.findMany({
+            where: (table, { inArray }) => inArray(table.id, Array.from(referencedMarketIds)),
+          })
+        : [];
+    const tokenRows =
+      referencedTokenIds.size > 0
+        ? await db.query.tokens.findMany({
+            where: (table, { inArray }) => inArray(table.id, Array.from(referencedTokenIds)),
+          })
+        : [];
+
+    const marketMap = new Map(marketRows.map((row) => [row.id, row]));
+    const tokenMap = new Map(tokenRows.map((row) => [row.id, row]));
+
+    const buildRisk = (bucket: PositionBucket) => {
+      const collateralUsd = textToBigint(bucket.position.collateralUsdRay);
+      const debtUsd = textToBigint(bucket.position.debtUsdRay);
+      const ltvRay = collateralUsd > 0n ? ratioRay(debtUsd, collateralUsd) : 0n;
+
+      let maxLtvBps = 0;
+      let maxLiquidationBps = 0;
+
+      for (const entry of bucket.entries) {
+        if (entry.type === "borrow") continue;
+        const token = tokenMap.get(entry.tokenId);
+        if (!token) continue;
+        if (token.collateralFactorBps > maxLtvBps) {
+          maxLtvBps = token.collateralFactorBps;
+        }
+        const liquidation = token.liquidationThresholdBps ?? 0;
+        if (liquidation > maxLiquidationBps) {
+          maxLiquidationBps = liquidation;
+        }
+      }
+
+      return {
+        ltvRay: bigintToText(ltvRay),
+        maxLtvBps,
+        maxLiquidationBps,
+        collateralUsdRay: bucket.position.collateralUsdRay,
+        debtUsdRay: bucket.position.debtUsdRay,
+        healthFactorRay: bucket.position.healthFactorRay,
+      };
+    };
+
+    const mapEntry = (entry: PositionBucket["entries"][number]) => ({
+      ...entry,
+      market: marketMap.get(entry.marketId) ?? null,
+      token: tokenMap.get(entry.tokenId) ?? null,
+    });
+
     for (const id of orderedPositionIds) {
       const bucket = buckets.get(id);
       if (!bucket) continue;
       seen.add(id);
       response.push({
         ...bucket.position,
-        entries: bucket.entries,
+        risk: buildRisk(bucket),
+        entries: bucket.entries.map(mapEntry),
       });
     }
 
@@ -319,7 +394,8 @@ app.get("/positions", async (c) => {
       if (seen.has(id)) continue;
       response.push({
         ...bucket.position,
-        entries: bucket.entries,
+        risk: buildRisk(bucket),
+        entries: bucket.entries.map(mapEntry),
       });
     }
 
