@@ -362,6 +362,13 @@ export const upsertLiquidityPosition = async (
     blockTimestamp: bigint;
   },
 ) => {
+  const positionKey = await ensurePosition(db, {
+    chainId: params.chainId,
+    account: params.account,
+    blockNumber: params.blockNumber,
+    blockTimestamp: params.blockTimestamp,
+  });
+
   const rowId = liquidityPositionId(params.chainId, params.account, params.tokenAddress);
   const tokenKey = tokenId(params.chainId, params.tokenAddress);
   const marketKey = marketId(params.chainId, params.tokenAddress);

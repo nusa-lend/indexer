@@ -2,10 +2,11 @@ import type { Context } from "hono";
 import { Hono } from "hono";
 import { client, graphql } from "ponder";
 import { db } from "ponder:api";
-import schema from "ponder:schema";
+import schema, { positions as positionsTable } from "ponder:schema";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 import { roles } from "./roles/roles.js";
+import { positionId as makePositionId } from "../lib/ids";
 
 const app = new Hono();
 
@@ -86,6 +87,97 @@ app.get("/markets", async (c) => {
   }
 });
 
+const parsePositionId = (id: string) => {
+  const [prefix, chainId, account] = id.split(":");
+  if (prefix !== "position" || !chainId || !account) {
+    throw new Error(`Invalid position id: ${id}`);
+  }
+  return { chainId, account: account as `0x${string}` };
+};
+
+type PositionRow = typeof positionsTable.$inferSelect;
+
+type PositionBucket = {
+  position: PositionRow;
+  entries: Array<{
+    type: "supply_collateral" | "supply_liquidity" | "borrow";
+    tokenId: string;
+    amount: bigint;
+    usdValueRay: string;
+    updatedAtBlock: bigint;
+    updatedAtTimestamp: bigint;
+    chainDst?: number | null;
+  }>;
+};
+
+const ensureBucket = (
+  buckets: Map<string, PositionBucket>,
+  positionId: string,
+  fallback?: () => PositionRow,
+) => {
+  let bucket = buckets.get(positionId);
+  if (!bucket) {
+    const position = fallback
+      ? fallback()
+      : (() => {
+          const { chainId, account } = parsePositionId(positionId);
+          return createPositionRecord({
+            id: positionId,
+            chainId,
+            account,
+          });
+        })();
+    bucket = { position, entries: [] };
+    buckets.set(positionId, bucket);
+  }
+  return bucket;
+};
+
+const updatePositionTimestamps = (
+  bucket: PositionBucket,
+  updatedAtBlock: bigint,
+  updatedAtTimestamp: bigint,
+) => {
+  if (updatedAtBlock > bucket.position.updatedAtBlock) {
+    bucket.position.updatedAtBlock = updatedAtBlock;
+  }
+  if (updatedAtTimestamp > bucket.position.updatedAtTimestamp) {
+    bucket.position.updatedAtTimestamp = updatedAtTimestamp;
+  }
+};
+
+const createPositionRecord = ({
+  id,
+  chainId,
+  account,
+  status,
+  collateralUsdRay,
+  debtUsdRay,
+  healthFactorRay,
+  updatedAtBlock,
+  updatedAtTimestamp,
+}: {
+  id: string;
+  chainId: string;
+  account: `0x${string}`;
+  status?: string;
+  collateralUsdRay?: string;
+  debtUsdRay?: string;
+  healthFactorRay?: string;
+  updatedAtBlock?: bigint;
+  updatedAtTimestamp?: bigint;
+}): PositionRow => ({
+  id,
+  chainId,
+  account,
+  status: status ?? "active",
+  collateralUsdRay: collateralUsdRay ?? "0",
+  debtUsdRay: debtUsdRay ?? "0",
+  healthFactorRay: healthFactorRay ?? "0",
+  updatedAtBlock: updatedAtBlock ?? 0n,
+  updatedAtTimestamp: updatedAtTimestamp ?? 0n,
+});
+
 app.get("/positions", async (c) => {
   try {
     const chain = c.req.query("chain");
@@ -124,40 +216,112 @@ app.get("/positions", async (c) => {
 
     const positionIds = positions.map((position) => position.id);
 
-    const [collaterals, debts] = await Promise.all([
+    const [collaterals, debts, liquidity] = await Promise.all([
       db.query.positionCollaterals.findMany({
         where: (table, { inArray }) => inArray(table.positionId, positionIds),
       }),
       db.query.positionDebts.findMany({
         where: (table, { inArray }) => inArray(table.positionId, positionIds),
       }),
+      db.query.liquidityPositions.findMany({
+        where:
+          chain || account
+            ? (table, { and, eq }) => {
+                let predicate;
+                if (chain) {
+                  predicate = eq(table.chainId, chain);
+                }
+                if (account) {
+                  const accountPredicate = eq(table.account, account);
+                  predicate = predicate ? and(predicate, accountPredicate) : accountPredicate;
+                }
+                return predicate!;
+              }
+            : undefined,
+      }),
     ]);
 
-    const collateralsByPosition = new Map<string, typeof collaterals>();
+    const buckets = new Map<string, PositionBucket>();
+    const orderedPositionIds: string[] = [];
+
+    for (const position of positions) {
+      const positionCopy: PositionRow = { ...position };
+      buckets.set(position.id, { position: positionCopy, entries: [] });
+      orderedPositionIds.push(position.id);
+    }
+
     for (const collateral of collaterals) {
-      const existing = collateralsByPosition.get(collateral.positionId);
-      if (existing) {
-        existing.push(collateral);
-      } else {
-        collateralsByPosition.set(collateral.positionId, [collateral]);
-      }
+      const bucket = ensureBucket(buckets, collateral.positionId);
+      bucket.entries.push({
+        type: "supply_collateral",
+        tokenId: collateral.tokenId,
+        amount: collateral.amount,
+        usdValueRay: collateral.usdValueRay,
+        updatedAtBlock: collateral.updatedAtBlock,
+        updatedAtTimestamp: collateral.updatedAtTimestamp,
+      });
+      updatePositionTimestamps(bucket, collateral.updatedAtBlock, collateral.updatedAtTimestamp);
     }
 
-    const debtsByPosition = new Map<string, typeof debts>();
     for (const debt of debts) {
-      const existing = debtsByPosition.get(debt.positionId);
-      if (existing) {
-        existing.push(debt);
-      } else {
-        debtsByPosition.set(debt.positionId, [debt]);
+      const bucket = ensureBucket(buckets, debt.positionId);
+      bucket.entries.push({
+        type: "borrow",
+        tokenId: debt.tokenId,
+        amount: debt.amount,
+        usdValueRay: debt.usdValueRay,
+        updatedAtBlock: debt.updatedAtBlock,
+        updatedAtTimestamp: debt.updatedAtTimestamp,
+        chainDst: debt.chainDst ?? null,
+      });
+      updatePositionTimestamps(bucket, debt.updatedAtBlock, debt.updatedAtTimestamp);
+    }
+
+    for (const entry of liquidity) {
+      const positionId = makePositionId(entry.chainId, entry.account);
+      const bucket = ensureBucket(buckets, positionId, () =>
+        createPositionRecord({
+          id: positionId,
+          chainId: entry.chainId,
+          account: entry.account,
+          updatedAtBlock: entry.updatedAtBlock,
+          updatedAtTimestamp: entry.updatedAtTimestamp,
+        }),
+      );
+      bucket.entries.push({
+        type: "supply_liquidity",
+        tokenId: entry.tokenId,
+        amount: entry.amount,
+        usdValueRay: entry.usdValueRay,
+        updatedAtBlock: entry.updatedAtBlock,
+        updatedAtTimestamp: entry.updatedAtTimestamp,
+      });
+      updatePositionTimestamps(bucket, entry.updatedAtBlock, entry.updatedAtTimestamp);
+      if (!orderedPositionIds.includes(positionId)) {
+        orderedPositionIds.push(positionId);
       }
     }
 
-    const response = positions.map((position) => ({
-      ...position,
-      collaterals: collateralsByPosition.get(position.id) ?? [],
-      debts: debtsByPosition.get(position.id) ?? [],
-    }));
+    const seen = new Set<string>();
+    const response = [];
+
+    for (const id of orderedPositionIds) {
+      const bucket = buckets.get(id);
+      if (!bucket) continue;
+      seen.add(id);
+      response.push({
+        ...bucket.position,
+        entries: bucket.entries,
+      });
+    }
+
+    for (const [id, bucket] of buckets.entries()) {
+      if (seen.has(id)) continue;
+      response.push({
+        ...bucket.position,
+        entries: bucket.entries,
+      });
+    }
 
     return sendOk(c, response);
   } catch (error) {
