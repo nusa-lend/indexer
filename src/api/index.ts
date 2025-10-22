@@ -285,7 +285,8 @@ app.get("/positions", async (c) => {
       const marketId = makeMarketId(bucket.position.chainId, address);
       referencedTokenIds.add(debt.tokenId);
       referencedMarketIds.add(marketId);
-      borrowKeys.add(`${bucket.position.id}:${debt.tokenId}`);
+      const borrowKey = `${bucket.position.id}|${debt.tokenId}`;
+      borrowKeys.add(borrowKey);
       bucket.entries.push({
         type: "borrow",
         tokenId: debt.tokenId,
@@ -330,7 +331,10 @@ app.get("/positions", async (c) => {
     const borrowPositionIds = new Set<string>();
     const borrowTokenIds = new Set<string>();
     for (const key of borrowKeys) {
-      const [positionId, tokenId] = key.split(":");
+      const separator = key.indexOf("|");
+      if (separator === -1) continue;
+      const positionId = key.slice(0, separator);
+      const tokenId = key.slice(separator + 1);
       borrowPositionIds.add(positionId);
       borrowTokenIds.add(tokenId);
     }
@@ -349,7 +353,7 @@ app.get("/positions", async (c) => {
 
     const loanMap = new Map<string, (typeof openLoans)[number]>();
     for (const loan of openLoans) {
-      const key = `${loan.positionId}:${loan.borrowTokenId}`;
+      const key = `${loan.positionId}|${loan.borrowTokenId}`;
       const existing = loanMap.get(key);
       if (!existing || loan.startBlock > existing.startBlock) {
         loanMap.set(key, loan);
@@ -430,7 +434,7 @@ app.get("/positions", async (c) => {
         const token = tokenMap.get(entry.tokenId) ?? null;
         const loan =
           entry.type === "borrow"
-            ? loanMap.get(`${bucket.position.id}:${entry.tokenId}`)
+            ? loanMap.get(`${bucket.position.id}|${entry.tokenId}`)
             : undefined;
 
         const loanMetrics = loan
