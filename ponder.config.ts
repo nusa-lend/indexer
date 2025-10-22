@@ -90,11 +90,24 @@ for (const chain of parsed.chains) {
     return adjusted > 0 ? adjusted : 0;
   };
 
+  const lendingPoolStartCandidates = [
+    chain.contracts.lendingPool.startBlock,
+    chain.contracts.proxy?.startBlock,
+  ].filter((value): value is number => value !== undefined);
+
+  const lendingPoolStartBlock =
+    lendingPoolStartCandidates.length > 0
+      ? Math.min(...lendingPoolStartCandidates)
+      : chain.contracts.lendingPool.startBlock;
+
+  const lendingPoolAddress =
+    (chain.contracts.proxy?.address ?? chain.contracts.lendingPool.address) as `0x${string}`;
+
   contracts[`LendingPool_${chain.name}`] = {
     abi: LendingPool as Abi,
-    address: chain.contracts.lendingPool.address as `0x${string}`,
+    address: lendingPoolAddress,
     chain: chain.name,
-    startBlock: adjustStartBlock(chain.contracts.lendingPool.startBlock),
+    startBlock: adjustStartBlock(lendingPoolStartBlock),
   };
 
   contracts[`OAppBorrow_${chain.name}`] = {

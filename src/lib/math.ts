@@ -68,3 +68,21 @@ export const sumBigInt = (values: Iterable<bigint>): bigint => {
 export const clampToZero = (value: bigint): bigint => {
   return value < ZERO ? ZERO : value;
 };
+
+export const textToBigint = (
+  value: string | bigint | number | null | undefined,
+): bigint => {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") return BigInt(value);
+  if (typeof value === "string") {
+    if (value.length === 0) return ZERO;
+    try {
+      return BigInt(value);
+    } catch {
+      return ZERO;
+    }
+  }
+  return ZERO;
+};
+
+export const bigintToText = (value: bigint): string => value.toString();

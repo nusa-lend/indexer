@@ -28,6 +28,8 @@ import {
   ratioRay,
   sumBigInt,
   toUsdRay,
+  bigintToText,
+  textToBigint,
 } from "./math";
 import { MAX_HEALTH_FACTOR, computeHealthFactor } from "./hf";
 type Database = Context["db"];
@@ -91,9 +93,9 @@ export const ensurePosition = async (
       chainId: chainKey(params.chainId),
       account: params.account.toLowerCase() as `0x${string}`,
       status: "active",
-      healthFactorRay: MAX_HEALTH_FACTOR,
-      collateralUsdRay: 0n,
-      debtUsdRay: 0n,
+      healthFactorRay: bigintToText(MAX_HEALTH_FACTOR),
+      collateralUsdRay: "0",
+      debtUsdRay: "0",
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     })
@@ -195,19 +197,22 @@ export const ensureMarket = async (
 
   const marketKey = marketId(params.chainId, params.tokenAddress);
 
+  const lendingPoolAddress =
+    chainMeta.contracts.proxy?.address ?? chainMeta.contracts.lendingPool.address;
+
   await db
     .insert(markets)
     .values({
       id: marketKey,
       chainId: chainKey(params.chainId),
       marketType: "lending",
-      lendingPool: chainMeta.contracts.lendingPool.address,
+      lendingPool: lendingPoolAddress,
       tokenId: tokenId(params.chainId, params.tokenAddress),
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     })
     .onConflictDoUpdate({
-      lendingPool: chainMeta.contracts.lendingPool.address,
+      lendingPool: lendingPoolAddress,
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     });
@@ -273,11 +278,11 @@ export const recalcMarketMetrics = async (
   await db.update(markets, { id: marketKey }).set({
     totalSupplyAssets,
     totalBorrowAssets,
-    totalBorrowUsd,
-    tvlUsd,
-    utilizationRay,
-    borrowRateRay: borrowApyRay,
-    supplyRateRay: supplyApyRay,
+    totalBorrowUsd: bigintToText(totalBorrowUsd),
+    tvlUsd: bigintToText(tvlUsd),
+    utilizationRay: bigintToText(utilizationRay),
+    borrowRateRay: bigintToText(borrowApyRay),
+    supplyRateRay: bigintToText(supplyApyRay),
     updatedAtBlock: params.blockNumber,
     updatedAtTimestamp: params.blockTimestamp,
   });
@@ -328,13 +333,13 @@ export const upsertPositionCollateral = async (
       positionId: positionKey,
       tokenId: tokenKey,
       amount: nextAmount,
-      usdValueRay,
+      usdValueRay: bigintToText(usdValueRay),
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     })
     .onConflictDoUpdate({
       amount: nextAmount,
-      usdValueRay,
+      usdValueRay: bigintToText(usdValueRay),
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     });
@@ -377,14 +382,14 @@ export const upsertPositionDebt = async (
       positionId: positionKey,
       tokenId: tokenKey,
       amount: nextAmount,
-      usdValueRay,
+      usdValueRay: bigintToText(usdValueRay),
       chainDst: params.dstChainId,
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
     })
     .onConflictDoUpdate({
       amount: nextAmount,
-      usdValueRay,
+      usdValueRay: bigintToText(usdValueRay),
       chainDst: params.dstChainId,
       updatedAtBlock: params.blockNumber,
       updatedAtTimestamp: params.blockTimestamp,
@@ -414,10 +419,10 @@ export const updateDailyProtocolStats = async (
     .where(eq(markets.chainId, chainIdKey));
 
   const totalTvlUsd = sumBigInt(
-    marketRows.map((row: { tvlUsd: bigint }) => row.tvlUsd),
+    marketRows.map((row: { tvlUsd: string }) => textToBigint(row.tvlUsd)),
   );
   const totalBorrowUsd = sumBigInt(
-    marketRows.map((row: { borrowUsd: bigint }) => row.borrowUsd),
+    marketRows.map((row: { borrowUsd: string }) => textToBigint(row.borrowUsd)),
   );
 
   await db
@@ -425,16 +430,16 @@ export const updateDailyProtocolStats = async (
     .values({
       chainId: chainIdKey,
       day,
-      tvlUsd: totalTvlUsd,
-      totalBorrowsUsd: totalBorrowUsd,
-      feesUsd: 0n,
-      revenueUsd: 0n,
+      tvlUsd: bigintToText(totalTvlUsd),
+      totalBorrowsUsd: bigintToText(totalBorrowUsd),
+      feesUsd: "0",
+      revenueUsd: "0",
       blockNumber: params.blockNumber,
       blockTimestamp: params.blockTimestamp,
     })
     .onConflictDoUpdate({
-      tvlUsd: totalTvlUsd,
-      totalBorrowsUsd: totalBorrowUsd,
+      tvlUsd: bigintToText(totalTvlUsd),
+      totalBorrowsUsd: bigintToText(totalBorrowUsd),
       blockTimestamp: params.blockTimestamp,
       blockNumber: params.blockNumber,
     });
@@ -470,28 +475,28 @@ export const refreshPositionMetrics = async (
     const tokenMeta = tokenLookup.get(address.toLowerCase());
     const collateralFactorBps = tokenMeta?.token.collateralFactorBps ?? 0;
     return {
-      usdRay: collateral.usdValueRay,
+      usdRay: textToBigint(collateral.usdValueRay),
       collateralFactorBps,
     };
   });
 
   const debtSnapshots = debts.map((debt) => ({
-    usdRay: debt.usdValueRay,
+    usdRay: textToBigint(debt.usdValueRay),
   }));
 
   const collateralUsdRay = sumBigInt(
-    collaterals.map((row) => row.usdValueRay),
+    collaterals.map((row) => textToBigint(row.usdValueRay)),
   );
-  const debtUsdRay = sumBigInt(debts.map((row) => row.usdValueRay));
+  const debtUsdRay = sumBigInt(debts.map((row) => textToBigint(row.usdValueRay)));
   const healthFactorRay = computeHealthFactor(
     collateralSnapshots,
     debtSnapshots,
   );
 
   await db.update(positions, { id: params.positionId }).set({
-    collateralUsdRay,
-    debtUsdRay,
-    healthFactorRay,
+    collateralUsdRay: bigintToText(collateralUsdRay),
+    debtUsdRay: bigintToText(debtUsdRay),
+    healthFactorRay: bigintToText(healthFactorRay),
     updatedAtBlock: params.blockNumber,
     updatedAtTimestamp: params.blockTimestamp,
   });

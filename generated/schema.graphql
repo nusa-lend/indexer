@@ -232,12 +232,12 @@ type markets {
   totalBorrowAssets: BigInt!
   totalBorrowShares: BigInt!
   availableLiquidity: BigInt!
-  utilizationRay: BigInt!
-  supplyRateRay: BigInt!
-  borrowRateRay: BigInt!
+  utilizationRay: String!
+  supplyRateRay: String!
+  borrowRateRay: String!
   reserveFactorBps: Int!
-  totalBorrowUsd: BigInt!
-  tvlUsd: BigInt!
+  totalBorrowUsd: String!
+  tvlUsd: String!
   updatedAtBlock: BigInt!
   updatedAtTimestamp: BigInt!
 }
@@ -341,30 +341,36 @@ input marketsFilter {
   availableLiquidity_lt: BigInt
   availableLiquidity_gte: BigInt
   availableLiquidity_lte: BigInt
-  utilizationRay: BigInt
-  utilizationRay_not: BigInt
-  utilizationRay_in: [BigInt]
-  utilizationRay_not_in: [BigInt]
-  utilizationRay_gt: BigInt
-  utilizationRay_lt: BigInt
-  utilizationRay_gte: BigInt
-  utilizationRay_lte: BigInt
-  supplyRateRay: BigInt
-  supplyRateRay_not: BigInt
-  supplyRateRay_in: [BigInt]
-  supplyRateRay_not_in: [BigInt]
-  supplyRateRay_gt: BigInt
-  supplyRateRay_lt: BigInt
-  supplyRateRay_gte: BigInt
-  supplyRateRay_lte: BigInt
-  borrowRateRay: BigInt
-  borrowRateRay_not: BigInt
-  borrowRateRay_in: [BigInt]
-  borrowRateRay_not_in: [BigInt]
-  borrowRateRay_gt: BigInt
-  borrowRateRay_lt: BigInt
-  borrowRateRay_gte: BigInt
-  borrowRateRay_lte: BigInt
+  utilizationRay: String
+  utilizationRay_not: String
+  utilizationRay_in: [String]
+  utilizationRay_not_in: [String]
+  utilizationRay_contains: String
+  utilizationRay_not_contains: String
+  utilizationRay_starts_with: String
+  utilizationRay_ends_with: String
+  utilizationRay_not_starts_with: String
+  utilizationRay_not_ends_with: String
+  supplyRateRay: String
+  supplyRateRay_not: String
+  supplyRateRay_in: [String]
+  supplyRateRay_not_in: [String]
+  supplyRateRay_contains: String
+  supplyRateRay_not_contains: String
+  supplyRateRay_starts_with: String
+  supplyRateRay_ends_with: String
+  supplyRateRay_not_starts_with: String
+  supplyRateRay_not_ends_with: String
+  borrowRateRay: String
+  borrowRateRay_not: String
+  borrowRateRay_in: [String]
+  borrowRateRay_not_in: [String]
+  borrowRateRay_contains: String
+  borrowRateRay_not_contains: String
+  borrowRateRay_starts_with: String
+  borrowRateRay_ends_with: String
+  borrowRateRay_not_starts_with: String
+  borrowRateRay_not_ends_with: String
   reserveFactorBps: Int
   reserveFactorBps_not: Int
   reserveFactorBps_in: [Int]
@@ -373,22 +379,26 @@ input marketsFilter {
   reserveFactorBps_lt: Int
   reserveFactorBps_gte: Int
   reserveFactorBps_lte: Int
-  totalBorrowUsd: BigInt
-  totalBorrowUsd_not: BigInt
-  totalBorrowUsd_in: [BigInt]
-  totalBorrowUsd_not_in: [BigInt]
-  totalBorrowUsd_gt: BigInt
-  totalBorrowUsd_lt: BigInt
-  totalBorrowUsd_gte: BigInt
-  totalBorrowUsd_lte: BigInt
-  tvlUsd: BigInt
-  tvlUsd_not: BigInt
-  tvlUsd_in: [BigInt]
-  tvlUsd_not_in: [BigInt]
-  tvlUsd_gt: BigInt
-  tvlUsd_lt: BigInt
-  tvlUsd_gte: BigInt
-  tvlUsd_lte: BigInt
+  totalBorrowUsd: String
+  totalBorrowUsd_not: String
+  totalBorrowUsd_in: [String]
+  totalBorrowUsd_not_in: [String]
+  totalBorrowUsd_contains: String
+  totalBorrowUsd_not_contains: String
+  totalBorrowUsd_starts_with: String
+  totalBorrowUsd_ends_with: String
+  totalBorrowUsd_not_starts_with: String
+  totalBorrowUsd_not_ends_with: String
+  tvlUsd: String
+  tvlUsd_not: String
+  tvlUsd_in: [String]
+  tvlUsd_not_in: [String]
+  tvlUsd_contains: String
+  tvlUsd_not_contains: String
+  tvlUsd_starts_with: String
+  tvlUsd_ends_with: String
+  tvlUsd_not_starts_with: String
+  tvlUsd_not_ends_with: String
   updatedAtBlock: BigInt
   updatedAtBlock_not: BigInt
   updatedAtBlock_in: [BigInt]
@@ -412,9 +422,9 @@ type positions {
   chainId: String!
   account: String!
   status: String!
-  healthFactorRay: BigInt!
-  collateralUsdRay: BigInt!
-  debtUsdRay: BigInt!
+  healthFactorRay: String!
+  collateralUsdRay: String!
+  debtUsdRay: String!
   updatedAtBlock: BigInt!
   updatedAtTimestamp: BigInt!
 }
@@ -468,30 +478,36 @@ input positionsFilter {
   status_ends_with: String
   status_not_starts_with: String
   status_not_ends_with: String
-  healthFactorRay: BigInt
-  healthFactorRay_not: BigInt
-  healthFactorRay_in: [BigInt]
-  healthFactorRay_not_in: [BigInt]
-  healthFactorRay_gt: BigInt
-  healthFactorRay_lt: BigInt
-  healthFactorRay_gte: BigInt
-  healthFactorRay_lte: BigInt
-  collateralUsdRay: BigInt
-  collateralUsdRay_not: BigInt
-  collateralUsdRay_in: [BigInt]
-  collateralUsdRay_not_in: [BigInt]
-  collateralUsdRay_gt: BigInt
-  collateralUsdRay_lt: BigInt
-  collateralUsdRay_gte: BigInt
-  collateralUsdRay_lte: BigInt
-  debtUsdRay: BigInt
-  debtUsdRay_not: BigInt
-  debtUsdRay_in: [BigInt]
-  debtUsdRay_not_in: [BigInt]
-  debtUsdRay_gt: BigInt
-  debtUsdRay_lt: BigInt
-  debtUsdRay_gte: BigInt
-  debtUsdRay_lte: BigInt
+  healthFactorRay: String
+  healthFactorRay_not: String
+  healthFactorRay_in: [String]
+  healthFactorRay_not_in: [String]
+  healthFactorRay_contains: String
+  healthFactorRay_not_contains: String
+  healthFactorRay_starts_with: String
+  healthFactorRay_ends_with: String
+  healthFactorRay_not_starts_with: String
+  healthFactorRay_not_ends_with: String
+  collateralUsdRay: String
+  collateralUsdRay_not: String
+  collateralUsdRay_in: [String]
+  collateralUsdRay_not_in: [String]
+  collateralUsdRay_contains: String
+  collateralUsdRay_not_contains: String
+  collateralUsdRay_starts_with: String
+  collateralUsdRay_ends_with: String
+  collateralUsdRay_not_starts_with: String
+  collateralUsdRay_not_ends_with: String
+  debtUsdRay: String
+  debtUsdRay_not: String
+  debtUsdRay_in: [String]
+  debtUsdRay_not_in: [String]
+  debtUsdRay_contains: String
+  debtUsdRay_not_contains: String
+  debtUsdRay_starts_with: String
+  debtUsdRay_ends_with: String
+  debtUsdRay_not_starts_with: String
+  debtUsdRay_not_ends_with: String
   updatedAtBlock: BigInt
   updatedAtBlock_not: BigInt
   updatedAtBlock_in: [BigInt]
@@ -515,7 +531,7 @@ type positionCollaterals {
   positionId: String!
   tokenId: String!
   amount: BigInt!
-  usdValueRay: BigInt!
+  usdValueRay: String!
   updatedAtBlock: BigInt!
   updatedAtTimestamp: BigInt!
 }
@@ -567,14 +583,16 @@ input positionCollateralsFilter {
   amount_lt: BigInt
   amount_gte: BigInt
   amount_lte: BigInt
-  usdValueRay: BigInt
-  usdValueRay_not: BigInt
-  usdValueRay_in: [BigInt]
-  usdValueRay_not_in: [BigInt]
-  usdValueRay_gt: BigInt
-  usdValueRay_lt: BigInt
-  usdValueRay_gte: BigInt
-  usdValueRay_lte: BigInt
+  usdValueRay: String
+  usdValueRay_not: String
+  usdValueRay_in: [String]
+  usdValueRay_not_in: [String]
+  usdValueRay_contains: String
+  usdValueRay_not_contains: String
+  usdValueRay_starts_with: String
+  usdValueRay_ends_with: String
+  usdValueRay_not_starts_with: String
+  usdValueRay_not_ends_with: String
   updatedAtBlock: BigInt
   updatedAtBlock_not: BigInt
   updatedAtBlock_in: [BigInt]
@@ -598,7 +616,7 @@ type positionDebts {
   positionId: String!
   tokenId: String!
   amount: BigInt!
-  usdValueRay: BigInt!
+  usdValueRay: String!
   chainDst: Int
   updatedAtBlock: BigInt!
   updatedAtTimestamp: BigInt!
@@ -651,14 +669,16 @@ input positionDebtsFilter {
   amount_lt: BigInt
   amount_gte: BigInt
   amount_lte: BigInt
-  usdValueRay: BigInt
-  usdValueRay_not: BigInt
-  usdValueRay_in: [BigInt]
-  usdValueRay_not_in: [BigInt]
-  usdValueRay_gt: BigInt
-  usdValueRay_lt: BigInt
-  usdValueRay_gte: BigInt
-  usdValueRay_lte: BigInt
+  usdValueRay: String
+  usdValueRay_not: String
+  usdValueRay_in: [String]
+  usdValueRay_not_in: [String]
+  usdValueRay_contains: String
+  usdValueRay_not_contains: String
+  usdValueRay_starts_with: String
+  usdValueRay_ends_with: String
+  usdValueRay_not_starts_with: String
+  usdValueRay_not_ends_with: String
   chainDst: Int
   chainDst_not: Int
   chainDst_in: [Int]
@@ -692,11 +712,11 @@ type positionLoans {
   account: String!
   borrowTokenId: String!
   borrowAmount: BigInt!
-  borrowUsdRay: BigInt!
-  borrowAprRay: BigInt!
-  borrowApyRay: BigInt!
-  collateralUsdRay: BigInt!
-  debtUsdRay: BigInt!
+  borrowUsdRay: String!
+  borrowAprRay: String!
+  borrowApyRay: String!
+  collateralUsdRay: String!
+  debtUsdRay: String!
   startBlock: BigInt!
   startTimestamp: BigInt!
   startTxHash: String!
@@ -704,7 +724,7 @@ type positionLoans {
   endTimestamp: BigInt
   endTxHash: String
   repaidAmount: BigInt!
-  repaidUsdRay: BigInt!
+  repaidUsdRay: String!
   status: String!
   createdAt: BigInt!
   updatedAt: BigInt!
@@ -777,46 +797,56 @@ input positionLoansFilter {
   borrowAmount_lt: BigInt
   borrowAmount_gte: BigInt
   borrowAmount_lte: BigInt
-  borrowUsdRay: BigInt
-  borrowUsdRay_not: BigInt
-  borrowUsdRay_in: [BigInt]
-  borrowUsdRay_not_in: [BigInt]
-  borrowUsdRay_gt: BigInt
-  borrowUsdRay_lt: BigInt
-  borrowUsdRay_gte: BigInt
-  borrowUsdRay_lte: BigInt
-  borrowAprRay: BigInt
-  borrowAprRay_not: BigInt
-  borrowAprRay_in: [BigInt]
-  borrowAprRay_not_in: [BigInt]
-  borrowAprRay_gt: BigInt
-  borrowAprRay_lt: BigInt
-  borrowAprRay_gte: BigInt
-  borrowAprRay_lte: BigInt
-  borrowApyRay: BigInt
-  borrowApyRay_not: BigInt
-  borrowApyRay_in: [BigInt]
-  borrowApyRay_not_in: [BigInt]
-  borrowApyRay_gt: BigInt
-  borrowApyRay_lt: BigInt
-  borrowApyRay_gte: BigInt
-  borrowApyRay_lte: BigInt
-  collateralUsdRay: BigInt
-  collateralUsdRay_not: BigInt
-  collateralUsdRay_in: [BigInt]
-  collateralUsdRay_not_in: [BigInt]
-  collateralUsdRay_gt: BigInt
-  collateralUsdRay_lt: BigInt
-  collateralUsdRay_gte: BigInt
-  collateralUsdRay_lte: BigInt
-  debtUsdRay: BigInt
-  debtUsdRay_not: BigInt
-  debtUsdRay_in: [BigInt]
-  debtUsdRay_not_in: [BigInt]
-  debtUsdRay_gt: BigInt
-  debtUsdRay_lt: BigInt
-  debtUsdRay_gte: BigInt
-  debtUsdRay_lte: BigInt
+  borrowUsdRay: String
+  borrowUsdRay_not: String
+  borrowUsdRay_in: [String]
+  borrowUsdRay_not_in: [String]
+  borrowUsdRay_contains: String
+  borrowUsdRay_not_contains: String
+  borrowUsdRay_starts_with: String
+  borrowUsdRay_ends_with: String
+  borrowUsdRay_not_starts_with: String
+  borrowUsdRay_not_ends_with: String
+  borrowAprRay: String
+  borrowAprRay_not: String
+  borrowAprRay_in: [String]
+  borrowAprRay_not_in: [String]
+  borrowAprRay_contains: String
+  borrowAprRay_not_contains: String
+  borrowAprRay_starts_with: String
+  borrowAprRay_ends_with: String
+  borrowAprRay_not_starts_with: String
+  borrowAprRay_not_ends_with: String
+  borrowApyRay: String
+  borrowApyRay_not: String
+  borrowApyRay_in: [String]
+  borrowApyRay_not_in: [String]
+  borrowApyRay_contains: String
+  borrowApyRay_not_contains: String
+  borrowApyRay_starts_with: String
+  borrowApyRay_ends_with: String
+  borrowApyRay_not_starts_with: String
+  borrowApyRay_not_ends_with: String
+  collateralUsdRay: String
+  collateralUsdRay_not: String
+  collateralUsdRay_in: [String]
+  collateralUsdRay_not_in: [String]
+  collateralUsdRay_contains: String
+  collateralUsdRay_not_contains: String
+  collateralUsdRay_starts_with: String
+  collateralUsdRay_ends_with: String
+  collateralUsdRay_not_starts_with: String
+  collateralUsdRay_not_ends_with: String
+  debtUsdRay: String
+  debtUsdRay_not: String
+  debtUsdRay_in: [String]
+  debtUsdRay_not_in: [String]
+  debtUsdRay_contains: String
+  debtUsdRay_not_contains: String
+  debtUsdRay_starts_with: String
+  debtUsdRay_ends_with: String
+  debtUsdRay_not_starts_with: String
+  debtUsdRay_not_ends_with: String
   startBlock: BigInt
   startBlock_not: BigInt
   startBlock_in: [BigInt]
@@ -877,14 +907,16 @@ input positionLoansFilter {
   repaidAmount_lt: BigInt
   repaidAmount_gte: BigInt
   repaidAmount_lte: BigInt
-  repaidUsdRay: BigInt
-  repaidUsdRay_not: BigInt
-  repaidUsdRay_in: [BigInt]
-  repaidUsdRay_not_in: [BigInt]
-  repaidUsdRay_gt: BigInt
-  repaidUsdRay_lt: BigInt
-  repaidUsdRay_gte: BigInt
-  repaidUsdRay_lte: BigInt
+  repaidUsdRay: String
+  repaidUsdRay_not: String
+  repaidUsdRay_in: [String]
+  repaidUsdRay_not_in: [String]
+  repaidUsdRay_contains: String
+  repaidUsdRay_not_contains: String
+  repaidUsdRay_starts_with: String
+  repaidUsdRay_ends_with: String
+  repaidUsdRay_not_starts_with: String
+  repaidUsdRay_not_ends_with: String
   status: String
   status_not: String
   status_in: [String]
@@ -917,7 +949,7 @@ type oraclePrices {
   id: String!
   chainId: String!
   tokenId: String!
-  priceRay: BigInt!
+  priceRay: String!
   source: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -962,14 +994,16 @@ input oraclePricesFilter {
   tokenId_ends_with: String
   tokenId_not_starts_with: String
   tokenId_not_ends_with: String
-  priceRay: BigInt
-  priceRay_not: BigInt
-  priceRay_in: [BigInt]
-  priceRay_not_in: [BigInt]
-  priceRay_gt: BigInt
-  priceRay_lt: BigInt
-  priceRay_gte: BigInt
-  priceRay_lte: BigInt
+  priceRay: String
+  priceRay_not: String
+  priceRay_in: [String]
+  priceRay_not_in: [String]
+  priceRay_contains: String
+  priceRay_not_contains: String
+  priceRay_starts_with: String
+  priceRay_ends_with: String
+  priceRay_not_starts_with: String
+  priceRay_not_ends_with: String
   source: String
   source_not: String
   source_in: [String]
@@ -1007,7 +1041,7 @@ type liquidations {
   collateralTokenId: String!
   debtRepaid: BigInt!
   collateralSeized: BigInt!
-  penaltyUsdRay: BigInt!
+  penaltyUsdRay: String!
   txHash: String!
   logIndex: Int!
   blockNumber: BigInt!
@@ -1099,14 +1133,16 @@ input liquidationsFilter {
   collateralSeized_lt: BigInt
   collateralSeized_gte: BigInt
   collateralSeized_lte: BigInt
-  penaltyUsdRay: BigInt
-  penaltyUsdRay_not: BigInt
-  penaltyUsdRay_in: [BigInt]
-  penaltyUsdRay_not_in: [BigInt]
-  penaltyUsdRay_gt: BigInt
-  penaltyUsdRay_lt: BigInt
-  penaltyUsdRay_gte: BigInt
-  penaltyUsdRay_lte: BigInt
+  penaltyUsdRay: String
+  penaltyUsdRay_not: String
+  penaltyUsdRay_in: [String]
+  penaltyUsdRay_not_in: [String]
+  penaltyUsdRay_contains: String
+  penaltyUsdRay_not_contains: String
+  penaltyUsdRay_starts_with: String
+  penaltyUsdRay_ends_with: String
+  penaltyUsdRay_not_starts_with: String
+  penaltyUsdRay_not_ends_with: String
   txHash: String
   txHash_not: String
   txHash_in: [String]
@@ -1302,10 +1338,10 @@ input crossChainMessagesFilter {
 type protocolStatsDaily {
   chainId: String!
   day: String!
-  tvlUsd: BigInt!
-  totalBorrowsUsd: BigInt!
-  feesUsd: BigInt!
-  revenueUsd: BigInt!
+  tvlUsd: String!
+  totalBorrowsUsd: String!
+  feesUsd: String!
+  revenueUsd: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
 }
@@ -1339,38 +1375,46 @@ input protocolStatsDailyFilter {
   day_ends_with: String
   day_not_starts_with: String
   day_not_ends_with: String
-  tvlUsd: BigInt
-  tvlUsd_not: BigInt
-  tvlUsd_in: [BigInt]
-  tvlUsd_not_in: [BigInt]
-  tvlUsd_gt: BigInt
-  tvlUsd_lt: BigInt
-  tvlUsd_gte: BigInt
-  tvlUsd_lte: BigInt
-  totalBorrowsUsd: BigInt
-  totalBorrowsUsd_not: BigInt
-  totalBorrowsUsd_in: [BigInt]
-  totalBorrowsUsd_not_in: [BigInt]
-  totalBorrowsUsd_gt: BigInt
-  totalBorrowsUsd_lt: BigInt
-  totalBorrowsUsd_gte: BigInt
-  totalBorrowsUsd_lte: BigInt
-  feesUsd: BigInt
-  feesUsd_not: BigInt
-  feesUsd_in: [BigInt]
-  feesUsd_not_in: [BigInt]
-  feesUsd_gt: BigInt
-  feesUsd_lt: BigInt
-  feesUsd_gte: BigInt
-  feesUsd_lte: BigInt
-  revenueUsd: BigInt
-  revenueUsd_not: BigInt
-  revenueUsd_in: [BigInt]
-  revenueUsd_not_in: [BigInt]
-  revenueUsd_gt: BigInt
-  revenueUsd_lt: BigInt
-  revenueUsd_gte: BigInt
-  revenueUsd_lte: BigInt
+  tvlUsd: String
+  tvlUsd_not: String
+  tvlUsd_in: [String]
+  tvlUsd_not_in: [String]
+  tvlUsd_contains: String
+  tvlUsd_not_contains: String
+  tvlUsd_starts_with: String
+  tvlUsd_ends_with: String
+  tvlUsd_not_starts_with: String
+  tvlUsd_not_ends_with: String
+  totalBorrowsUsd: String
+  totalBorrowsUsd_not: String
+  totalBorrowsUsd_in: [String]
+  totalBorrowsUsd_not_in: [String]
+  totalBorrowsUsd_contains: String
+  totalBorrowsUsd_not_contains: String
+  totalBorrowsUsd_starts_with: String
+  totalBorrowsUsd_ends_with: String
+  totalBorrowsUsd_not_starts_with: String
+  totalBorrowsUsd_not_ends_with: String
+  feesUsd: String
+  feesUsd_not: String
+  feesUsd_in: [String]
+  feesUsd_not_in: [String]
+  feesUsd_contains: String
+  feesUsd_not_contains: String
+  feesUsd_starts_with: String
+  feesUsd_ends_with: String
+  feesUsd_not_starts_with: String
+  feesUsd_not_ends_with: String
+  revenueUsd: String
+  revenueUsd_not: String
+  revenueUsd_in: [String]
+  revenueUsd_not_in: [String]
+  revenueUsd_contains: String
+  revenueUsd_not_contains: String
+  revenueUsd_starts_with: String
+  revenueUsd_ends_with: String
+  revenueUsd_not_starts_with: String
+  revenueUsd_not_ends_with: String
   blockNumber: BigInt
   blockNumber_not: BigInt
   blockNumber_in: [BigInt]

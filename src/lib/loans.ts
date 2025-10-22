@@ -2,6 +2,8 @@ import { and, desc, eq } from "ponder";
 import { positionLoans } from "ponder:schema";
 import type { Context } from "ponder:registry";
 
+import { bigintToText, textToBigint } from "./math";
+
 type Database = Context["db"];
 
 export const createLoanRecord = async (
@@ -32,11 +34,11 @@ export const createLoanRecord = async (
       account: params.account,
       borrowTokenId: params.borrowTokenId,
       borrowAmount: params.borrowAmount,
-      borrowUsdRay: params.borrowUsdRay,
-      borrowAprRay: params.borrowAprRay,
-      borrowApyRay: params.borrowApyRay,
-      collateralUsdRay: params.collateralUsdRay,
-      debtUsdRay: params.debtUsdRay,
+      borrowUsdRay: bigintToText(params.borrowUsdRay),
+      borrowAprRay: bigintToText(params.borrowAprRay),
+      borrowApyRay: bigintToText(params.borrowApyRay),
+      collateralUsdRay: bigintToText(params.collateralUsdRay),
+      debtUsdRay: bigintToText(params.debtUsdRay),
       startBlock: params.blockNumber,
       startTimestamp: params.blockTimestamp,
       startTxHash: params.txHash,
@@ -77,13 +79,14 @@ export const recordLoanRepayment = async (
   if (!openLoan) return;
 
   const nextRepaidAmount = openLoan.repaidAmount + params.repayAmount;
-  const nextRepaidUsdRay = openLoan.repaidUsdRay + params.repayUsdRay;
+  const currentRepaidUsdRay = textToBigint(openLoan.repaidUsdRay);
+  const nextRepaidUsdRay = currentRepaidUsdRay + params.repayUsdRay;
 
   const updateData: {
     repaidAmount: bigint;
-    repaidUsdRay: bigint;
-    collateralUsdRay: bigint;
-    debtUsdRay: bigint;
+    repaidUsdRay: string;
+    collateralUsdRay: string;
+    debtUsdRay: string;
     updatedAt: bigint;
     status?: string;
     endBlock?: bigint;
@@ -91,9 +94,9 @@ export const recordLoanRepayment = async (
     endTxHash?: `0x${string}`;
   } = {
     repaidAmount: nextRepaidAmount,
-    repaidUsdRay: nextRepaidUsdRay,
-    collateralUsdRay: params.collateralUsdRay,
-    debtUsdRay: params.debtUsdRay,
+    repaidUsdRay: bigintToText(nextRepaidUsdRay),
+    collateralUsdRay: bigintToText(params.collateralUsdRay),
+    debtUsdRay: bigintToText(params.debtUsdRay),
     updatedAt: params.blockTimestamp,
   };
 

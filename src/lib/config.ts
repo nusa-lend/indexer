@@ -59,7 +59,13 @@ export const isHealthyLookup = new Map<number, { chain: ChainConfig; address: `0
 export const proxyLookup = new Map<number, { chain: ChainConfig; address: `0x${string}` }>();
 
 for (const chain of lendingConfig.chains) {
-  lendingPoolLookup.set(chain.contracts.lendingPool.address.toLowerCase(), { chain });
+  const lendingPoolAddress =
+    chain.contracts.proxy?.address ?? chain.contracts.lendingPool.address;
+
+  lendingPoolLookup.set(lendingPoolAddress.toLowerCase(), { chain });
+  if (lendingPoolAddress.toLowerCase() !== chain.contracts.lendingPool.address.toLowerCase()) {
+    lendingPoolLookup.set(chain.contracts.lendingPool.address.toLowerCase(), { chain });
+  }
   oAppLookup.set(chain.contracts.oAppBorrow.address.toLowerCase(), { chain });
 
   if (chain.contracts.tokenDataStream) {
