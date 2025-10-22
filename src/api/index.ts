@@ -11,7 +11,7 @@ import {
   marketId as makeMarketId,
   splitTokenId,
 } from "../lib/ids";
-import { ratioRay, textToBigint, bigintToText } from "../lib/math";
+import { ratioRay, textToBigint, bigintToText, RAY } from "../lib/math";
 
 const app = new Hono();
 
@@ -47,6 +47,8 @@ const sendError = (
         : "Unexpected error";
   return c.json({ error: message }, status);
 };
+
+const SECONDS_IN_YEAR = 31_536_000n;
 
 app.get("/healthz", (c) => sendOk(c, { status: "ok" }));
 
@@ -251,6 +253,7 @@ app.get("/positions", async (c) => {
     const orderedPositionIds: string[] = [];
     const referencedTokenIds = new Set<string>();
     const referencedMarketIds = new Set<string>();
+    const borrowKeys = new Set<string>();
 
     for (const position of positions) {
       const positionCopy: PositionRow = { ...position };
@@ -282,6 +285,7 @@ app.get("/positions", async (c) => {
       const marketId = makeMarketId(bucket.position.chainId, address);
       referencedTokenIds.add(debt.tokenId);
       referencedMarketIds.add(marketId);
+      borrowKeys.add(`${bucket.position.id}:${debt.tokenId}`);
       bucket.entries.push({
         type: "borrow",
         tokenId: debt.tokenId,
@@ -320,6 +324,35 @@ app.get("/positions", async (c) => {
       updatePositionTimestamps(bucket, entry.updatedAtBlock, entry.updatedAtTimestamp);
       if (!orderedPositionIds.includes(positionId)) {
         orderedPositionIds.push(positionId);
+      }
+    }
+
+    const borrowPositionIds = new Set<string>();
+    const borrowTokenIds = new Set<string>();
+    for (const key of borrowKeys) {
+      const [positionId, tokenId] = key.split(":");
+      borrowPositionIds.add(positionId);
+      borrowTokenIds.add(tokenId);
+    }
+
+    const openLoans =
+      borrowKeys.size > 0
+        ? await db.query.positionLoans.findMany({
+            where: (table, { and, inArray, eq }) =>
+              and(
+                inArray(table.positionId, Array.from(borrowPositionIds)),
+                inArray(table.borrowTokenId, Array.from(borrowTokenIds)),
+                eq(table.status, "open"),
+              ),
+          })
+        : [];
+
+    const loanMap = new Map<string, (typeof openLoans)[number]>();
+    for (const loan of openLoans) {
+      const key = `${loan.positionId}:${loan.borrowTokenId}`;
+      const existing = loanMap.get(key);
+      if (!existing || loan.startBlock > existing.startBlock) {
+        loanMap.set(key, loan);
       }
     }
 
@@ -373,11 +406,61 @@ app.get("/positions", async (c) => {
       };
     };
 
-    const mapEntry = (entry: PositionBucket["entries"][number]) => ({
-      ...entry,
-      market: marketMap.get(entry.marketId) ?? null,
-      token: tokenMap.get(entry.tokenId) ?? null,
-    });
+    const computeLoanMetrics = (
+      loan: (typeof openLoans)[number],
+      nowTimestamp: bigint,
+    ) => {
+      const borrowUsdRay = textToBigint(loan.borrowUsdRay);
+      const aprRay = textToBigint(loan.borrowAprRay);
+      const duration = nowTimestamp > loan.startTimestamp ? nowTimestamp - loan.startTimestamp : 0n;
+      const interestUsdRay =
+        borrowUsdRay === 0n || aprRay === 0n
+          ? 0n
+          : (borrowUsdRay * aprRay * duration) / (RAY * SECONDS_IN_YEAR);
+
+      return {
+        durationSeconds: Number(duration > 0n ? duration : 0n),
+        interestUsdRay: bigintToText(interestUsdRay),
+      };
+    };
+
+    const mapEntry = (bucket: PositionBucket) =>
+      (entry: PositionBucket["entries"][number]) => {
+        const market = marketMap.get(entry.marketId) ?? null;
+        const token = tokenMap.get(entry.tokenId) ?? null;
+        const loan =
+          entry.type === "borrow"
+            ? loanMap.get(`${bucket.position.id}:${entry.tokenId}`)
+            : undefined;
+
+        const loanMetrics = loan
+          ? computeLoanMetrics(loan, bucket.position.updatedAtTimestamp)
+          : undefined;
+
+        return {
+          ...entry,
+          market,
+          token,
+          interestUsdRay: loanMetrics?.interestUsdRay ?? null,
+          loan: loan
+            ? {
+                id: loan.id,
+                startTimestamp: loan.startTimestamp,
+                startBlock: loan.startBlock,
+                startTxHash: loan.startTxHash,
+                borrowAmount: loan.borrowAmount,
+                borrowUsdRay: loan.borrowUsdRay,
+                borrowAprRay: loan.borrowAprRay,
+                borrowApyRay: loan.borrowApyRay,
+                repaidAmount: loan.repaidAmount,
+                repaidUsdRay: loan.repaidUsdRay,
+                status: loan.status,
+                estimatedInterestUsdRay: loanMetrics?.interestUsdRay ?? null,
+                durationSeconds: loanMetrics?.durationSeconds ?? null,
+              }
+            : null,
+        };
+      };
 
     for (const id of orderedPositionIds) {
       const bucket = buckets.get(id);
@@ -386,7 +469,7 @@ app.get("/positions", async (c) => {
       response.push({
         ...bucket.position,
         risk: buildRisk(bucket),
-        entries: bucket.entries.map(mapEntry),
+        entries: bucket.entries.map(mapEntry(bucket)),
       });
     }
 
@@ -395,7 +478,7 @@ app.get("/positions", async (c) => {
       response.push({
         ...bucket.position,
         risk: buildRisk(bucket),
-        entries: bucket.entries.map(mapEntry),
+        entries: bucket.entries.map(mapEntry(bucket)),
       });
     }
 
