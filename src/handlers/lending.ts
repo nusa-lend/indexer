@@ -10,6 +10,7 @@ import {
   refreshPositionMetrics,
   updateDailyProtocolStats,
   upsertPositionCollateral,
+  upsertLiquidityPosition,
   upsertPositionDebt,
 } from "../lib/storage";
 import { clampToZero, toUsdRay } from "../lib/math";
@@ -178,6 +179,156 @@ const handleWithdrawCollateral = async ({ event, context }: HandlerArgs) => {
   });
 
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
+  await recalcMarketMetrics(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+    blockTimestamp,
+    priceRay,
+  });
+
+  await updateDailyProtocolStats(db, {
+    chainId,
+    blockTimestamp,
+    blockNumber,
+  });
+};
+
+const handleSupplyLiquidity = async ({ event, context }: HandlerArgs) => {
+  const { db, chain } = context;
+  const chainId = chain.id as number;
+  const blockNumber = event.block.number as bigint;
+  const blockTimestamp = event.block.timestamp as bigint;
+  logBlockProgress(context, "SupplyLiquidity event", chainId, blockNumber);
+  const { user, token, amount } = event.args as {
+    user: `0x${string}`;
+    token: `0x${string}`;
+    amount: bigint;
+  };
+
+  await ensureChain(db, { chainId, blockNumber });
+  const tokenInfo = await ensureToken(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+  });
+  const marketKey = await ensureMarket(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+    blockTimestamp,
+  });
+
+  const marketRow = await db.find(markets, { id: marketKey });
+  const nextSupply = clampToZero((marketRow?.totalSupplyAssets ?? 0n) + amount);
+  const nextLiquidity = clampToZero(
+    (marketRow?.availableLiquidity ?? 0n) + amount,
+  );
+
+  await db.update(markets, { id: marketKey }).set({
+    totalSupplyAssets: nextSupply,
+    availableLiquidity: nextLiquidity,
+    updatedAtBlock: blockNumber,
+    updatedAtTimestamp: blockTimestamp,
+  });
+
+  const priceRay = await ensureOraclePrice(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+    },
+    context.publicClient,
+  );
+
+  await upsertLiquidityPosition(db, {
+    chainId,
+    account: user,
+    tokenAddress: token,
+    amountDelta: amount,
+    priceRay,
+    decimals: tokenInfo.decimals,
+    blockNumber,
+    blockTimestamp,
+  });
+
+  await recalcMarketMetrics(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+    blockTimestamp,
+    priceRay,
+  });
+
+  await updateDailyProtocolStats(db, {
+    chainId,
+    blockTimestamp,
+    blockNumber,
+  });
+};
+
+const handleWithdrawLiquidity = async ({ event, context }: HandlerArgs) => {
+  const { db, chain } = context;
+  const chainId = chain.id as number;
+  const blockNumber = event.block.number as bigint;
+  const blockTimestamp = event.block.timestamp as bigint;
+  logBlockProgress(context, "WithdrawLiquidity event", chainId, blockNumber);
+  const { user, token, amount } = event.args as {
+    user: `0x${string}`;
+    token: `0x${string}`;
+    amount: bigint;
+  };
+
+  await ensureChain(db, { chainId, blockNumber });
+  const tokenInfo = await ensureToken(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+  });
+  const marketKey = await ensureMarket(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+    blockTimestamp,
+  });
+
+  const marketRow = await db.find(markets, { id: marketKey });
+  const nextSupply = clampToZero((marketRow?.totalSupplyAssets ?? 0n) - amount);
+  const nextLiquidity = clampToZero(
+    (marketRow?.availableLiquidity ?? 0n) - amount,
+  );
+
+  await db.update(markets, { id: marketKey }).set({
+    totalSupplyAssets: nextSupply,
+    availableLiquidity: nextLiquidity,
+    updatedAtBlock: blockNumber,
+    updatedAtTimestamp: blockTimestamp,
+  });
+
+  const priceRay = await ensureOraclePrice(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+    },
+    context.publicClient,
+  );
+
+  await upsertLiquidityPosition(db, {
+    chainId,
+    account: user,
+    tokenAddress: token,
+    amountDelta: -amount,
+    priceRay,
+    decimals: tokenInfo.decimals,
+    blockNumber,
+    blockTimestamp,
+  });
+
   await recalcMarketMetrics(db, {
     chainId,
     tokenAddress: token,
@@ -396,6 +547,8 @@ for (const chain of lendingConfig.chains) {
 
   ponder.on(`${lendingPoolContract}:SupplyCollateral` as any, handleSupplyCollateral as any);
   ponder.on(`${lendingPoolContract}:WithdrawCollateral` as any, handleWithdrawCollateral as any);
+  ponder.on(`${lendingPoolContract}:SupplyLiquidity` as any, handleSupplyLiquidity as any);
+  ponder.on(`${lendingPoolContract}:WithdrawLiquidity` as any, handleWithdrawLiquidity as any);
   ponder.on(`${lendingPoolContract}:Borrow` as any, handleBorrow as any);
   ponder.on(`${lendingPoolContract}:Repay` as any, handleRepay as any);
 }

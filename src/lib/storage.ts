@@ -2,6 +2,7 @@ import { asc, eq } from "ponder";
 import {
   chains,
   markets,
+  liquidityPositions,
   positionCollaterals,
   positionDebts,
   positions,
@@ -20,6 +21,7 @@ import {
   protocolStatsDailyId,
   splitTokenId,
   tokenId,
+  liquidityPositionId,
 } from "./ids";
 import {
   RAY,
@@ -345,6 +347,50 @@ export const upsertPositionCollateral = async (
     });
 
   return { positionId: positionKey };
+};
+
+export const upsertLiquidityPosition = async (
+  db: Database,
+  params: {
+    chainId: number;
+    account: `0x${string}`;
+    tokenAddress: `0x${string}`;
+    amountDelta: bigint;
+    priceRay: bigint;
+    decimals: number;
+    blockNumber: bigint;
+    blockTimestamp: bigint;
+  },
+) => {
+  const rowId = liquidityPositionId(params.chainId, params.account, params.tokenAddress);
+  const tokenKey = tokenId(params.chainId, params.tokenAddress);
+  const marketKey = marketId(params.chainId, params.tokenAddress);
+
+  const existing = await db.find(liquidityPositions, { id: rowId });
+  const nextAmount = clampToZero((existing?.amount ?? 0n) + params.amountDelta);
+  const usdValueRay = toUsdRay(nextAmount, params.priceRay, params.decimals);
+
+  await db
+    .insert(liquidityPositions)
+    .values({
+      id: rowId,
+      chainId: chainKey(params.chainId),
+      account: params.account.toLowerCase() as `0x${string}`,
+      marketId: marketKey,
+      tokenId: tokenKey,
+      amount: nextAmount,
+      usdValueRay: bigintToText(usdValueRay),
+      updatedAtBlock: params.blockNumber,
+      updatedAtTimestamp: params.blockTimestamp,
+    })
+    .onConflictDoUpdate({
+      amount: nextAmount,
+      usdValueRay: bigintToText(usdValueRay),
+      updatedAtBlock: params.blockNumber,
+      updatedAtTimestamp: params.blockTimestamp,
+    });
+
+  return { liquidityPositionId: rowId };
 };
 
 export const upsertPositionDebt = async (

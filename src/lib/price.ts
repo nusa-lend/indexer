@@ -11,7 +11,7 @@ import {
   type TokenConfig,
 } from "./config";
 import { oraclePriceId, tokenId as makeTokenId } from "./ids";
-import { RAY } from "./math";
+import { RAY, bigintToText, textToBigint } from "./math";
 
 type Database = Context["db"];
 type OraclePricesTable = typeof oraclePrices;
@@ -24,15 +24,19 @@ const MAX_RAY_DECIMALS = 27n;
 
 export const upsertOraclePrice = async (
   db: Database,
-  values: OraclePriceRow,
+  values: Omit<OraclePriceRow, "priceRay"> & { priceRay: bigint | string },
 ) => {
+  const priceRay = typeof values.priceRay === "bigint" ? bigintToText(values.priceRay) : values.priceRay;
   await db
     .insert(oraclePrices)
-    .values(values)
+    .values({
+      ...values,
+      priceRay,
+    })
     .onConflictDoUpdate({
       blockNumber: values.blockNumber,
       blockTimestamp: values.blockTimestamp,
-      priceRay: values.priceRay,
+      priceRay,
       source: values.source,
     });
 };
@@ -100,27 +104,27 @@ export const ensureOraclePrice = async (
   const existing = await db.find(oraclePrices, { id });
 
   if (existing && existing.blockNumber >= params.blockNumber) {
-    return existing.priceRay;
+    return textToBigint(existing.priceRay);
   }
 
   const tokenMeta = tokenLookup.get(params.tokenAddress.toLowerCase());
   if (!tokenMeta) {
-    return existing?.priceRay ?? USD_FALLBACK_RAY;
+    return existing ? textToBigint(existing.priceRay) : USD_FALLBACK_RAY;
   }
 
   if (tokenMeta.chain.chainId !== params.chainId) {
-    return existing?.priceRay ?? USD_FALLBACK_RAY;
+    return existing ? textToBigint(existing.priceRay) : USD_FALLBACK_RAY;
   }
 
   const oracleStart = tokenMeta.token.oracleStartBlock ?? 0;
   if (oracleStart > 0 && params.blockNumber < BigInt(oracleStart)) {
-    return existing?.priceRay ?? USD_FALLBACK_RAY;
+    return existing ? textToBigint(existing.priceRay) : USD_FALLBACK_RAY;
   }
 
   const fetched = await fetchPriceFromOracle(tokenMeta, params.tokenAddress, publicClient);
 
   if (!fetched) {
-    return existing?.priceRay ?? USD_FALLBACK_RAY;
+    return existing ? textToBigint(existing.priceRay) : USD_FALLBACK_RAY;
   }
 
   await upsertOraclePrice(db, {

@@ -28,6 +28,14 @@ export const positionDebtId = (
     : `debt:${position}:${token}:${chainKey(dstChainId)}`;
 };
 
+export const liquidityPositionId = (
+  chainId: number | string,
+  account: string,
+  tokenAddress: string
+): string => {
+  return `liquidity:${chainKey(chainId)}:${normalizeAddress(account)}:${normalizeAddress(tokenAddress)}`;
+};
+
 export const oraclePriceId = (chainId: number | string, token: string): string => {
   return `price:${tokenId(chainId, token)}`;
 };

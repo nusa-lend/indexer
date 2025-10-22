@@ -64,6 +64,18 @@ export const positionCollaterals = onchainTable("position_collaterals", (t) => (
   updatedAtTimestamp: t.bigint().notNull().default(0n),
 }));
 
+export const liquidityPositions = onchainTable("liquidity_positions", (t) => ({
+  id: t.text().primaryKey(),
+  chainId: t.text().notNull(),
+  account: t.hex().notNull(),
+  marketId: t.text().notNull(),
+  tokenId: t.text().notNull(),
+  amount: t.bigint().notNull().default(0n),
+  usdValueRay: t.text().notNull().default("0"),
+  updatedAtBlock: t.bigint().notNull().default(0n),
+  updatedAtTimestamp: t.bigint().notNull().default(0n),
+}));
+
 export const positionDebts = onchainTable("position_debts", (t) => ({
   id: t.text().primaryKey(),
   positionId: t.text().notNull(),

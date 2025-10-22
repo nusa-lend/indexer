@@ -27,6 +27,8 @@ type Query {
   positionss(where: positionsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionsPage!
   positionCollaterals(id: String!): positionCollaterals
   positionCollateralss(where: positionCollateralsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionCollateralsPage!
+  liquidityPositions(id: String!): liquidityPositions
+  liquidityPositionss(where: liquidityPositionsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): liquidityPositionsPage!
   positionDebts(id: String!): positionDebts
   positionDebtss(where: positionDebtsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionDebtsPage!
   positionLoans(id: String!): positionLoans
@@ -565,6 +567,113 @@ input positionCollateralsFilter {
   positionId_ends_with: String
   positionId_not_starts_with: String
   positionId_not_ends_with: String
+  tokenId: String
+  tokenId_not: String
+  tokenId_in: [String]
+  tokenId_not_in: [String]
+  tokenId_contains: String
+  tokenId_not_contains: String
+  tokenId_starts_with: String
+  tokenId_ends_with: String
+  tokenId_not_starts_with: String
+  tokenId_not_ends_with: String
+  amount: BigInt
+  amount_not: BigInt
+  amount_in: [BigInt]
+  amount_not_in: [BigInt]
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  usdValueRay: String
+  usdValueRay_not: String
+  usdValueRay_in: [String]
+  usdValueRay_not_in: [String]
+  usdValueRay_contains: String
+  usdValueRay_not_contains: String
+  usdValueRay_starts_with: String
+  usdValueRay_ends_with: String
+  usdValueRay_not_starts_with: String
+  usdValueRay_not_ends_with: String
+  updatedAtBlock: BigInt
+  updatedAtBlock_not: BigInt
+  updatedAtBlock_in: [BigInt]
+  updatedAtBlock_not_in: [BigInt]
+  updatedAtBlock_gt: BigInt
+  updatedAtBlock_lt: BigInt
+  updatedAtBlock_gte: BigInt
+  updatedAtBlock_lte: BigInt
+  updatedAtTimestamp: BigInt
+  updatedAtTimestamp_not: BigInt
+  updatedAtTimestamp_in: [BigInt]
+  updatedAtTimestamp_not_in: [BigInt]
+  updatedAtTimestamp_gt: BigInt
+  updatedAtTimestamp_lt: BigInt
+  updatedAtTimestamp_gte: BigInt
+  updatedAtTimestamp_lte: BigInt
+}
+
+type liquidityPositions {
+  id: String!
+  chainId: String!
+  account: String!
+  marketId: String!
+  tokenId: String!
+  amount: BigInt!
+  usdValueRay: String!
+  updatedAtBlock: BigInt!
+  updatedAtTimestamp: BigInt!
+}
+
+type liquidityPositionsPage {
+  items: [liquidityPositions!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input liquidityPositionsFilter {
+  AND: [liquidityPositionsFilter]
+  OR: [liquidityPositionsFilter]
+  id: String
+  id_not: String
+  id_in: [String]
+  id_not_in: [String]
+  id_contains: String
+  id_not_contains: String
+  id_starts_with: String
+  id_ends_with: String
+  id_not_starts_with: String
+  id_not_ends_with: String
+  chainId: String
+  chainId_not: String
+  chainId_in: [String]
+  chainId_not_in: [String]
+  chainId_contains: String
+  chainId_not_contains: String
+  chainId_starts_with: String
+  chainId_ends_with: String
+  chainId_not_starts_with: String
+  chainId_not_ends_with: String
+  account: String
+  account_not: String
+  account_in: [String]
+  account_not_in: [String]
+  account_contains: String
+  account_not_contains: String
+  account_starts_with: String
+  account_ends_with: String
+  account_not_starts_with: String
+  account_not_ends_with: String
+  marketId: String
+  marketId_not: String
+  marketId_in: [String]
+  marketId_not_in: [String]
+  marketId_contains: String
+  marketId_not_contains: String
+  marketId_starts_with: String
+  marketId_ends_with: String
+  marketId_not_starts_with: String
+  marketId_not_ends_with: String
   tokenId: String
   tokenId_not: String
   tokenId_in: [String]

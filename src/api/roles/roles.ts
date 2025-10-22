@@ -1,14 +1,16 @@
 import type { ReadonlyDrizzle } from "ponder";
 import schema from "ponder:schema";
 
+import { textToBigint } from "../../lib/math";
+
 type Database = ReadonlyDrizzle<typeof schema>;
 
 type PositionSnapshot = {
   chainId: string;
   account: `0x${string}`;
   status: string;
-  collateralUsdRay: bigint;
-  debtUsdRay: bigint;
+  collateralUsdRay: string;
+  debtUsdRay: string;
   updatedAtTimestamp: bigint;
 };
 
@@ -33,9 +35,11 @@ type RoleAccumulator = {
 
 const MAX_ROLE_ENTRIES = 25;
 
-const sortBigIntDesc = (left: bigint, right: bigint) => {
-  if (left === right) return 0;
-  return left > right ? -1 : 1;
+const sortBigIntDesc = (left: string, right: string) => {
+  const leftBig = textToBigint(left);
+  const rightBig = textToBigint(right);
+  if (leftBig === rightBig) return 0;
+  return leftBig > rightBig ? -1 : 1;
 };
 
 const finalize = ({ chainId, totals, lenders, borrowers }: RoleAccumulator): RoleSummary => ({
@@ -49,8 +53,8 @@ const finalize = ({ chainId, totals, lenders, borrowers }: RoleAccumulator): Rol
     .slice(0, MAX_ROLE_ENTRIES),
 });
 
-const isActiveLender = (position: PositionSnapshot) => position.collateralUsdRay > 0n;
-const isActiveBorrower = (position: PositionSnapshot) => position.debtUsdRay > 0n;
+const isActiveLender = (position: PositionSnapshot) => textToBigint(position.collateralUsdRay) > 0n;
+const isActiveBorrower = (position: PositionSnapshot) => textToBigint(position.debtUsdRay) > 0n;
 
 export const roles = async (database: Database, chain?: string) => {
   const queryResult = await database.query.positions.findMany({
