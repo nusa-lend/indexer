@@ -1,5 +1,5 @@
 # Fly.io configuration for lending-indexer
-app = "indexer"
+app = "nusa-lend-indexer"
 primary_region = "sin"
 
 [build]
