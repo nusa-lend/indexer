@@ -33,6 +33,8 @@ type Query {
   positionDebtss(where: positionDebtsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionDebtsPage!
   positionLoans(id: String!): positionLoans
   positionLoanss(where: positionLoansFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionLoansPage!
+  positionSupplyEvents(id: String!): positionSupplyEvents
+  positionSupplyEventss(where: positionSupplyEventsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): positionSupplyEventsPage!
   oraclePrices(id: String!): oraclePrices
   oraclePricess(where: oraclePricesFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): oraclePricesPage!
   liquidations(id: String!): liquidations
@@ -1052,6 +1054,175 @@ input positionLoansFilter {
   updatedAt_lt: BigInt
   updatedAt_gte: BigInt
   updatedAt_lte: BigInt
+}
+
+type positionSupplyEvents {
+  id: String!
+  positionId: String!
+  chainId: String!
+  account: String!
+  marketId: String!
+  tokenId: String!
+  entryType: String!
+  action: String!
+  amount: BigInt!
+  usdValueRay: String!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  txHash: String!
+  logIndex: Int!
+  createdAt: BigInt!
+}
+
+type positionSupplyEventsPage {
+  items: [positionSupplyEvents!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input positionSupplyEventsFilter {
+  AND: [positionSupplyEventsFilter]
+  OR: [positionSupplyEventsFilter]
+  id: String
+  id_not: String
+  id_in: [String]
+  id_not_in: [String]
+  id_contains: String
+  id_not_contains: String
+  id_starts_with: String
+  id_ends_with: String
+  id_not_starts_with: String
+  id_not_ends_with: String
+  positionId: String
+  positionId_not: String
+  positionId_in: [String]
+  positionId_not_in: [String]
+  positionId_contains: String
+  positionId_not_contains: String
+  positionId_starts_with: String
+  positionId_ends_with: String
+  positionId_not_starts_with: String
+  positionId_not_ends_with: String
+  chainId: String
+  chainId_not: String
+  chainId_in: [String]
+  chainId_not_in: [String]
+  chainId_contains: String
+  chainId_not_contains: String
+  chainId_starts_with: String
+  chainId_ends_with: String
+  chainId_not_starts_with: String
+  chainId_not_ends_with: String
+  account: String
+  account_not: String
+  account_in: [String]
+  account_not_in: [String]
+  account_contains: String
+  account_not_contains: String
+  account_starts_with: String
+  account_ends_with: String
+  account_not_starts_with: String
+  account_not_ends_with: String
+  marketId: String
+  marketId_not: String
+  marketId_in: [String]
+  marketId_not_in: [String]
+  marketId_contains: String
+  marketId_not_contains: String
+  marketId_starts_with: String
+  marketId_ends_with: String
+  marketId_not_starts_with: String
+  marketId_not_ends_with: String
+  tokenId: String
+  tokenId_not: String
+  tokenId_in: [String]
+  tokenId_not_in: [String]
+  tokenId_contains: String
+  tokenId_not_contains: String
+  tokenId_starts_with: String
+  tokenId_ends_with: String
+  tokenId_not_starts_with: String
+  tokenId_not_ends_with: String
+  entryType: String
+  entryType_not: String
+  entryType_in: [String]
+  entryType_not_in: [String]
+  entryType_contains: String
+  entryType_not_contains: String
+  entryType_starts_with: String
+  entryType_ends_with: String
+  entryType_not_starts_with: String
+  entryType_not_ends_with: String
+  action: String
+  action_not: String
+  action_in: [String]
+  action_not_in: [String]
+  action_contains: String
+  action_not_contains: String
+  action_starts_with: String
+  action_ends_with: String
+  action_not_starts_with: String
+  action_not_ends_with: String
+  amount: BigInt
+  amount_not: BigInt
+  amount_in: [BigInt]
+  amount_not_in: [BigInt]
+  amount_gt: BigInt
+  amount_lt: BigInt
+  amount_gte: BigInt
+  amount_lte: BigInt
+  usdValueRay: String
+  usdValueRay_not: String
+  usdValueRay_in: [String]
+  usdValueRay_not_in: [String]
+  usdValueRay_contains: String
+  usdValueRay_not_contains: String
+  usdValueRay_starts_with: String
+  usdValueRay_ends_with: String
+  usdValueRay_not_starts_with: String
+  usdValueRay_not_ends_with: String
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_in: [BigInt]
+  blockNumber_not_in: [BigInt]
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockTimestamp: BigInt
+  blockTimestamp_not: BigInt
+  blockTimestamp_in: [BigInt]
+  blockTimestamp_not_in: [BigInt]
+  blockTimestamp_gt: BigInt
+  blockTimestamp_lt: BigInt
+  blockTimestamp_gte: BigInt
+  blockTimestamp_lte: BigInt
+  txHash: String
+  txHash_not: String
+  txHash_in: [String]
+  txHash_not_in: [String]
+  txHash_contains: String
+  txHash_not_contains: String
+  txHash_starts_with: String
+  txHash_ends_with: String
+  txHash_not_starts_with: String
+  txHash_not_ends_with: String
+  logIndex: Int
+  logIndex_not: Int
+  logIndex_in: [Int]
+  logIndex_not_in: [Int]
+  logIndex_gt: Int
+  logIndex_lt: Int
+  logIndex_gte: Int
+  logIndex_lte: Int
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_in: [BigInt]
+  createdAt_not_in: [BigInt]
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
 }
 
 type oraclePrices {

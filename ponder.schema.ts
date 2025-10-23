@@ -112,6 +112,24 @@ export const positionLoans = onchainTable("position_loans", (t) => ({
   updatedAt: t.bigint().notNull(),
 }));
 
+export const positionSupplyEvents = onchainTable("position_supply_events", (t) => ({
+  id: t.text().primaryKey(),
+  positionId: t.text().notNull(),
+  chainId: t.text().notNull(),
+  account: t.hex().notNull(),
+  marketId: t.text().notNull(),
+  tokenId: t.text().notNull(),
+  entryType: t.text().notNull(),
+  action: t.text().notNull(),
+  amount: t.bigint().notNull(),
+  usdValueRay: t.text().notNull(),
+  blockNumber: t.bigint().notNull(),
+  blockTimestamp: t.bigint().notNull(),
+  txHash: t.hex().notNull(),
+  logIndex: t.integer().notNull(),
+  createdAt: t.bigint().notNull(),
+}));
+
 export const oraclePrices = onchainTable("oracle_prices", (t) => ({
   id: t.text().primaryKey(),
   chainId: t.text().notNull(),

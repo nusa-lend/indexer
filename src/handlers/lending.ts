@@ -17,6 +17,7 @@ import { clampToZero, toUsdRay } from "../lib/math";
 import { tokenId } from "../lib/ids";
 import { ensureOraclePrice } from "../lib/price";
 import { createLoanRecord, recordLoanRepayment } from "../lib/loans";
+import { recordSupplyEvent } from "../lib/supplies";
 
 type HandlerArgs = {
   event: any;
@@ -102,6 +103,27 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
+  const supplyEventId = `${positionId}:collateral:supply:${event.transaction.hash}:${event.log.logIndex}`;
+  const collateralTokenId = tokenId(chainId, token);
+  const supplyUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
+
+  await recordSupplyEvent(db, {
+    id: supplyEventId,
+    positionId,
+    chainId,
+    account: user.toLowerCase() as `0x${string}`,
+    marketId,
+    tokenId: collateralTokenId,
+    entryType: "collateral",
+    action: "supply",
+    amount,
+    usdValueRay: supplyUsdRay,
+    blockNumber,
+    blockTimestamp,
+    txHash: event.transaction.hash as `0x${string}`,
+    logIndex: Number(event.log.logIndex ?? 0),
+  });
+
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
   await recalcMarketMetrics(db, {
     chainId,
@@ -178,6 +200,27 @@ const handleWithdrawCollateral = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
+  const withdrawEventId = `${positionId}:collateral:withdraw:${event.transaction.hash}:${event.log.logIndex}`;
+  const collateralTokenId = tokenId(chainId, token);
+  const withdrawUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
+
+  await recordSupplyEvent(db, {
+    id: withdrawEventId,
+    positionId,
+    chainId,
+    account: user.toLowerCase() as `0x${string}`,
+    marketId,
+    tokenId: collateralTokenId,
+    entryType: "collateral",
+    action: "withdraw",
+    amount: -amount,
+    usdValueRay: -withdrawUsdRay,
+    blockNumber,
+    blockTimestamp,
+    txHash: event.transaction.hash as `0x${string}`,
+    logIndex: Number(event.log.logIndex ?? 0),
+  });
+
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
   await recalcMarketMetrics(db, {
     chainId,
@@ -243,7 +286,7 @@ const handleSupplyLiquidity = async ({ event, context }: HandlerArgs) => {
     context.publicClient,
   );
 
-  await upsertLiquidityPosition(db, {
+  const { positionId } = await upsertLiquidityPosition(db, {
     chainId,
     account: user,
     tokenAddress: token,
@@ -252,6 +295,27 @@ const handleSupplyLiquidity = async ({ event, context }: HandlerArgs) => {
     decimals: tokenInfo.decimals,
     blockNumber,
     blockTimestamp,
+  });
+
+  const liquidityEventId = `${positionId}:liquidity:supply:${event.transaction.hash}:${event.log.logIndex}`;
+  const liquidityTokenId = tokenId(chainId, token);
+  const liquidityUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
+
+  await recordSupplyEvent(db, {
+    id: liquidityEventId,
+    positionId,
+    chainId,
+    account: user.toLowerCase() as `0x${string}`,
+    marketId: marketKey,
+    tokenId: liquidityTokenId,
+    entryType: "liquidity",
+    action: "supply",
+    amount,
+    usdValueRay: liquidityUsdRay,
+    blockNumber,
+    blockTimestamp,
+    txHash: event.transaction.hash as `0x${string}`,
+    logIndex: Number(event.log.logIndex ?? 0),
   });
 
   await recalcMarketMetrics(db, {
@@ -318,7 +382,7 @@ const handleWithdrawLiquidity = async ({ event, context }: HandlerArgs) => {
     context.publicClient,
   );
 
-  await upsertLiquidityPosition(db, {
+  const { positionId } = await upsertLiquidityPosition(db, {
     chainId,
     account: user,
     tokenAddress: token,
@@ -327,6 +391,27 @@ const handleWithdrawLiquidity = async ({ event, context }: HandlerArgs) => {
     decimals: tokenInfo.decimals,
     blockNumber,
     blockTimestamp,
+  });
+
+  const withdrawEventId = `${positionId}:liquidity:withdraw:${event.transaction.hash}:${event.log.logIndex}`;
+  const liquidityTokenId = tokenId(chainId, token);
+  const withdrawUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
+
+  await recordSupplyEvent(db, {
+    id: withdrawEventId,
+    positionId,
+    chainId,
+    account: user.toLowerCase() as `0x${string}`,
+    marketId: marketKey,
+    tokenId: liquidityTokenId,
+    entryType: "liquidity",
+    action: "withdraw",
+    amount: -amount,
+    usdValueRay: -withdrawUsdRay,
+    blockNumber,
+    blockTimestamp,
+    txHash: event.transaction.hash as `0x${string}`,
+    logIndex: Number(event.log.logIndex ?? 0),
   });
 
   await recalcMarketMetrics(db, {

@@ -397,7 +397,7 @@ export const upsertLiquidityPosition = async (
       updatedAtTimestamp: params.blockTimestamp,
     });
 
-  return { liquidityPositionId: rowId };
+  return { liquidityPositionId: rowId, positionId: positionKey };
 };
 
 export const upsertPositionDebt = async (
