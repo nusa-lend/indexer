@@ -1,28 +1,22 @@
-# Fly.io configuration for lending-indexer
-app = "nusa-lend-indexer"
-primary_region = "sin"
+# fly.toml app configuration file generated for nusa-lend-indexer on 2025-10-23T07:47:13Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'nusa-lend-indexer'
+primary_region = 'ams'
 
 [build]
 
 [http_service]
-  internal_port = 42069
+  internal_port = 3000
   force_https = true
-  auto_stop_machines = "off"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
-
-  [[http_service.checks]]
-    grace_period = "60s"
-    interval = "10s"
-    method = "GET"
-    timeout = "5s"
-    path = "/health"
-
-[deploy]
-  strategy = "immediate"
+  processes = ['app']
 
 [[vm]]
-  cpu_kind = "shared"
+  cpu_kind = 'shared'
   cpus = 2
   memory_mb = 2048
