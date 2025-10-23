@@ -22,8 +22,10 @@ export type ChainContractsConfig = {
 };
 
 export type InterestModelConfig = {
-  borrowBaseRateBps: number;
-  borrowSlopeRateBps: number;
+  baseRateBps: number;
+  optimalUtilizationBps: number;
+  rateAtOptimalBps: number;
+  maxRateBps: number;
   reserveFactorBps?: number;
   compoundsPerYear?: number;
 };

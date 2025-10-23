@@ -32,6 +32,14 @@ type LendingConfig = {
         oracleStartBlock?: number;
       }>;
     };
+    interestModel?: {
+      baseRateBps: number;
+      optimalUtilizationBps: number;
+      rateAtOptimalBps: number;
+      maxRateBps: number;
+      reserveFactorBps?: number;
+      compoundsPerYear?: number;
+    };
   }>;
 };
 

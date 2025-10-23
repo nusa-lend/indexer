@@ -1,4 +1,5 @@
 import { asc, eq } from "ponder";
+import type { PublicClient } from "viem";
 import {
   chains,
   markets,
@@ -34,6 +35,7 @@ import {
   textToBigint,
 } from "./math";
 import { MAX_HEALTH_FACTOR, computeHealthFactor } from "./hf";
+import { ensureInterestModel } from "./interest";
 type Database = Context["db"];
 
 type MarketMetrics = {
@@ -226,6 +228,7 @@ export const recalcMarketMetrics = async (
     blockTimestamp: bigint;
     priceRay: bigint;
   },
+  publicClient?: PublicClient,
 ): Promise<MarketMetrics> => {
   const marketKey = marketId(params.chainId, params.tokenAddress);
   const market = await db.find(markets, { id: marketKey });
@@ -250,7 +253,7 @@ export const recalcMarketMetrics = async (
   const tvlUsd = toUsdRay(totalSupplyAssets, params.priceRay, decimals);
   const utilizationRay = ratioRay(totalBorrowAssets, totalSupplyAssets || 1n);
 
-  const interestModel = interestModelLookup.get(params.chainId);
+  let interestModel = await ensureInterestModel(params.chainId, publicClient);
 
   let borrowAprRay = 0n;
   let supplyAprRay = 0n;
@@ -258,17 +261,43 @@ export const recalcMarketMetrics = async (
   let supplyApyRay = 0n;
 
   if (interestModel) {
-    const baseRay = bpsToRay(interestModel.borrowBaseRateBps ?? 0);
-    const slopeRay = bpsToRay(interestModel.borrowSlopeRateBps ?? 0);
+    const baseRateBps = BigInt(interestModel.baseRateBps ?? 0);
+    const optimalUtilizationBps = BigInt(interestModel.optimalUtilizationBps ?? BPS);
+    const rateAtOptimalBps = BigInt(interestModel.rateAtOptimalBps ?? baseRateBps);
+    const maxRateBps = BigInt(interestModel.maxRateBps ?? rateAtOptimalBps);
     const reserveRay = bpsToRay(interestModel.reserveFactorBps ?? 0);
+    const compounds = interestModel.compoundsPerYear ?? 365;
 
-    borrowAprRay = baseRay + (slopeRay * utilizationRay) / RAY;
+    const utilizationBps = ((utilizationRay * BPS) + RAY / 2n) / RAY;
+    const cappedUtilizationBps = utilizationBps > BPS ? BPS : utilizationBps;
+
+    let borrowRateBps = baseRateBps;
+
+    if (optimalUtilizationBps <= 0n) {
+      borrowRateBps = maxRateBps;
+    } else if (cappedUtilizationBps <= optimalUtilizationBps) {
+      const delta = rateAtOptimalBps - baseRateBps;
+      const increment = optimalUtilizationBps === 0n ? 0n : (delta * cappedUtilizationBps) / optimalUtilizationBps;
+      borrowRateBps = baseRateBps + increment;
+    } else {
+      const upperUtilRange = BPS - optimalUtilizationBps;
+      if (upperUtilRange === 0n) {
+        borrowRateBps = maxRateBps;
+      } else {
+        const deltaHigh = maxRateBps - rateAtOptimalBps;
+        const incrementHigh = (deltaHigh * (cappedUtilizationBps - optimalUtilizationBps)) / upperUtilRange;
+        borrowRateBps = rateAtOptimalBps + incrementHigh;
+      }
+    }
+
+    if (borrowRateBps < baseRateBps) borrowRateBps = baseRateBps;
+    if (borrowRateBps > maxRateBps) borrowRateBps = maxRateBps;
+
+    borrowAprRay = bpsToRay(borrowRateBps);
+    borrowApyRay = aprToApyRay(borrowAprRay, compounds);
 
     supplyAprRay = (borrowAprRay * utilizationRay) / RAY;
     supplyAprRay = (supplyAprRay * (RAY - reserveRay)) / RAY;
-
-    const compounds = interestModel.compoundsPerYear ?? 365;
-    borrowApyRay = aprToApyRay(borrowAprRay, compounds);
     supplyApyRay = aprToApyRay(supplyAprRay, compounds);
   }
 

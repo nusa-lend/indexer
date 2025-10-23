@@ -103,13 +103,17 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
-  const marketMetrics = await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
-  });
+  const marketMetrics = await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
 
   const supplyEventId = `${positionId}:collateral:supply:${event.transaction.hash}:${event.log.logIndex}`;
   const collateralTokenId = tokenId(chainId, token);
@@ -137,7 +141,6 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
   });
 
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
-
   await updateDailyProtocolStats(db, {
     chainId,
     blockTimestamp,
@@ -205,6 +208,18 @@ const handleWithdrawCollateral = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
+  const marketMetrics = await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
+
   const withdrawEventId = `${positionId}:collateral:withdraw:${event.transaction.hash}:${event.log.logIndex}`;
   const collateralTokenId = tokenId(chainId, token);
   const withdrawUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
@@ -220,6 +235,10 @@ const handleWithdrawCollateral = async ({ event, context }: HandlerArgs) => {
     action: "withdraw",
     amount: -amount,
     usdValueRay: -withdrawUsdRay,
+    supplyAprRay: marketMetrics.supplyAprRay,
+    supplyApyRay: marketMetrics.supplyApyRay,
+    borrowAprRay: marketMetrics.borrowAprRay,
+    borrowApyRay: marketMetrics.borrowApyRay,
     blockNumber,
     blockTimestamp,
     txHash: event.transaction.hash as `0x${string}`,
@@ -227,13 +246,6 @@ const handleWithdrawCollateral = async ({ event, context }: HandlerArgs) => {
   });
 
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
-  await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
-  });
 
   await updateDailyProtocolStats(db, {
     chainId,
@@ -302,6 +314,18 @@ const handleSupplyLiquidity = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
+  const marketMetrics = await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
+
   const liquidityEventId = `${positionId}:liquidity:supply:${event.transaction.hash}:${event.log.logIndex}`;
   const liquidityTokenId = tokenId(chainId, token);
   const liquidityUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
@@ -317,18 +341,14 @@ const handleSupplyLiquidity = async ({ event, context }: HandlerArgs) => {
     action: "supply",
     amount,
     usdValueRay: liquidityUsdRay,
+    supplyAprRay: marketMetrics.supplyAprRay,
+    supplyApyRay: marketMetrics.supplyApyRay,
+    borrowAprRay: marketMetrics.borrowAprRay,
+    borrowApyRay: marketMetrics.borrowApyRay,
     blockNumber,
     blockTimestamp,
     txHash: event.transaction.hash as `0x${string}`,
     logIndex: Number(event.log.logIndex ?? 0),
-  });
-
-  await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
   });
 
   await updateDailyProtocolStats(db, {
@@ -402,6 +422,18 @@ const handleWithdrawLiquidity = async ({ event, context }: HandlerArgs) => {
   const liquidityTokenId = tokenId(chainId, token);
   const withdrawUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
 
+  const marketMetrics = await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
+
   await recordSupplyEvent(db, {
     id: withdrawEventId,
     positionId,
@@ -413,18 +445,14 @@ const handleWithdrawLiquidity = async ({ event, context }: HandlerArgs) => {
     action: "withdraw",
     amount: -amount,
     usdValueRay: -withdrawUsdRay,
+    supplyAprRay: marketMetrics.supplyAprRay,
+    supplyApyRay: marketMetrics.supplyApyRay,
+    borrowAprRay: marketMetrics.borrowAprRay,
+    borrowApyRay: marketMetrics.borrowApyRay,
     blockNumber,
     blockTimestamp,
     txHash: event.transaction.hash as `0x${string}`,
     logIndex: Number(event.log.logIndex ?? 0),
-  });
-
-  await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
   });
 
   await updateDailyProtocolStats(db, {
@@ -501,13 +529,17 @@ const handleBorrow = async ({ event, context }: HandlerArgs) => {
     blockNumber,
     blockTimestamp,
   });
-  const marketMetrics = await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
-  });
+  const marketMetrics = await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
 
   await updateDailyProtocolStats(db, {
     chainId,
@@ -602,13 +634,17 @@ const handleRepay = async ({ event, context }: HandlerArgs) => {
     blockNumber,
     blockTimestamp,
   });
-  await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
-  });
+  await recalcMarketMetrics(
+    db,
+    {
+      chainId,
+      tokenAddress: token,
+      blockNumber,
+      blockTimestamp,
+      priceRay,
+    },
+    context.publicClient,
+  );
 
   await updateDailyProtocolStats(db, {
     chainId,

@@ -211,8 +211,10 @@
         ]
       },
       "interestModel": {
-        "borrowBaseRateBps": 0,
-        "borrowSlopeRateBps": 5000,
+        "baseRateBps": 500,
+        "optimalUtilizationBps": 7500,
+        "rateAtOptimalBps": 1000,
+        "maxRateBps": 10000,
         "reserveFactorBps": 1000,
         "compoundsPerYear": 365
       }
@@ -428,8 +430,10 @@
         ]
       },
       "interestModel": {
-        "borrowBaseRateBps": 0,
-        "borrowSlopeRateBps": 5000,
+        "baseRateBps": 500,
+        "optimalUtilizationBps": 7500,
+        "rateAtOptimalBps": 1000,
+        "maxRateBps": 10000,
         "reserveFactorBps": 1000,
         "compoundsPerYear": 365
       }

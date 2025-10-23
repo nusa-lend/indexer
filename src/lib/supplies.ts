@@ -21,21 +21,16 @@ export const recordSupplyEvent = async (
     action: SupplyActionType;
     amount: bigint;
     usdValueRay: bigint;
-    supplyAprRay?: bigint;
-    supplyApyRay?: bigint;
-    borrowAprRay?: bigint;
-    borrowApyRay?: bigint;
+    supplyAprRay: bigint;
+    supplyApyRay: bigint;
+    borrowAprRay: bigint;
+    borrowApyRay: bigint;
     blockNumber: bigint;
     blockTimestamp: bigint;
     txHash: `0x${string}`;
     logIndex: number;
   },
 ) => {
-  const supplyAprRay = params.supplyAprRay ?? 0n;
-  const supplyApyRay = params.supplyApyRay ?? 0n;
-  const borrowAprRay = params.borrowAprRay ?? 0n;
-  const borrowApyRay = params.borrowApyRay ?? 0n;
-
   await db
     .insert(positionSupplyEvents)
     .values({
@@ -49,10 +44,10 @@ export const recordSupplyEvent = async (
       action: params.action,
       amount: params.amount,
       usdValueRay: bigintToText(params.usdValueRay),
-      supplyAprRay: bigintToText(supplyAprRay),
-      supplyApyRay: bigintToText(supplyApyRay),
-      borrowAprRay: bigintToText(borrowAprRay),
-      borrowApyRay: bigintToText(borrowApyRay),
+      supplyAprRay: bigintToText(params.supplyAprRay),
+      supplyApyRay: bigintToText(params.supplyApyRay),
+      borrowAprRay: bigintToText(params.borrowAprRay),
+      borrowApyRay: bigintToText(params.borrowApyRay),
       blockNumber: params.blockNumber,
       blockTimestamp: params.blockTimestamp,
       txHash: params.txHash,
