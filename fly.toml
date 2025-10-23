@@ -9,28 +9,28 @@ primary_region = 'ams'
 [build]
 
 [http_service]
-  internal_port = 3000
-  force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ["app"]
+internal_port = 3000
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ["app"]
 
 [processes]
 app = "npm run start -- --schema public"
 
-  [[http_service.checks]]
-    grace_period = "60s"
-    interval = "10s"
-    method = "GET"
-    timeout = "5s"
-    path = "/health"
-    
+[[http_service.checks]]
+grace_period = "60s"
+interval = "10s"
+method = "GET"
+timeout = "5s"
+path = "/health"
+
 
 [deploy]
-  strategy = "immediate"
+strategy = "immediate"
 
 [[vm]]
-  cpu_kind = 'shared'
-  cpus = 2
-  memory_mb = 2048
+cpu_kind = 'shared'
+cpus = 2
+memory_mb = 2048

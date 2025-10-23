@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/dbSetup.js && ponder dev",
-    "start": "node scripts/dbSetup.js && ponder start",
+    "start": "node scripts/dbSetup.js && ponder start --schema $FLY_IMAGE_REF",
     "codegen": "ponder codegen",
     "typecheck": "tsc --noEmit",
     "db:setup": "node scripts/dbSetup.js",
