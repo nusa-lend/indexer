@@ -384,26 +384,8 @@ app.get("/positions", async (c) => {
       const debtUsd = textToBigint(bucket.position.debtUsdRay);
       const ltvRay = collateralUsd > 0n ? ratioRay(debtUsd, collateralUsd) : 0n;
 
-      let maxLtvBps = 0;
-      let maxLiquidationBps = 0;
-
-      for (const entry of bucket.entries) {
-        if (entry.type === "borrow") continue;
-        const token = tokenMap.get(entry.tokenId);
-        if (!token) continue;
-        if (token.collateralFactorBps > maxLtvBps) {
-          maxLtvBps = token.collateralFactorBps;
-        }
-        const liquidation = token.liquidationThresholdBps ?? 0;
-        if (liquidation > maxLiquidationBps) {
-          maxLiquidationBps = liquidation;
-        }
-      }
-
       return {
         ltvRay: bigintToText(ltvRay),
-        maxLtvBps,
-        maxLiquidationBps,
         collateralUsdRay: bucket.position.collateralUsdRay,
         debtUsdRay: bucket.position.debtUsdRay,
         healthFactorRay: bucket.position.healthFactorRay,

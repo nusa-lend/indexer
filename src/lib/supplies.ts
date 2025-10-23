@@ -21,6 +21,10 @@ export const recordSupplyEvent = async (
     action: SupplyActionType;
     amount: bigint;
     usdValueRay: bigint;
+    supplyAprRay: bigint;
+    supplyApyRay: bigint;
+    borrowAprRay: bigint;
+    borrowApyRay: bigint;
     blockNumber: bigint;
     blockTimestamp: bigint;
     txHash: `0x${string}`;
@@ -40,6 +44,10 @@ export const recordSupplyEvent = async (
       action: params.action,
       amount: params.amount,
       usdValueRay: bigintToText(params.usdValueRay),
+      supplyAprRay: bigintToText(params.supplyAprRay),
+      supplyApyRay: bigintToText(params.supplyApyRay),
+      borrowAprRay: bigintToText(params.borrowAprRay),
+      borrowApyRay: bigintToText(params.borrowApyRay),
       blockNumber: params.blockNumber,
       blockTimestamp: params.blockTimestamp,
       txHash: params.txHash,

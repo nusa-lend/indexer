@@ -149,8 +149,6 @@ export const ensureToken = async (
 
   const symbol = tokenMeta?.token.symbol ?? "UNKNOWN";
   const decimals = tokenMeta?.token.decimals ?? 18;
-  const collateralFactorBps = tokenMeta?.token.collateralFactorBps ?? 0;
-
   const tokenKey = tokenId(params.chainId, params.tokenAddress);
 
   await db
@@ -162,19 +160,16 @@ export const ensureToken = async (
       symbol,
       name: symbol,
       decimals,
-      collateralFactorBps,
       createdAtBlock: params.blockNumber,
     })
     .onConflictDoUpdate({
       symbol,
       name: symbol,
       decimals,
-      collateralFactorBps,
     });
 
   return {
     decimals,
-    collateralFactorBps,
     tokenKey,
   };
 };
@@ -525,11 +520,8 @@ export const refreshPositionMetrics = async (
 
   const collateralSnapshots = collaterals.map((collateral) => {
     const { address } = splitTokenId(collateral.tokenId);
-    const tokenMeta = tokenLookup.get(address.toLowerCase());
-    const collateralFactorBps = tokenMeta?.token.collateralFactorBps ?? 0;
     return {
       usdRay: textToBigint(collateral.usdValueRay),
-      collateralFactorBps,
     };
   });
 

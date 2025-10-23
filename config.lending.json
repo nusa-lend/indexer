@@ -34,29 +34,25 @@
             "symbol": "USDC",
             "address": "0xC23e60Ac84240ffCe72680652515dfb1435C356b",
             "startBlock": 390474780,
-            "decimals": 6,
-            "collateralFactorBps": 9000
+            "decimals": 6
           },
           {
             "symbol": "WETH",
             "address": "0x338802B73DA88D05e1b3A0203092AD43807049Be",
             "startBlock": 390474787,
-            "decimals": 18,
-            "collateralFactorBps": 8000
+            "decimals": 18
           },
           {
             "symbol": "WBTC",
             "address": "0xF1839107BECE28De0e83c92911434a18293B45A4",
             "startBlock": 390474794,
-            "decimals": 8,
-            "collateralFactorBps": 7000
+            "decimals": 8
           },
           {
             "symbol": "CADC",
             "address": "0x99d19F4Cb938E0aAD646358c20cB9D0CE0A7a945",
             "startBlock": 391522593,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0x2b4c8a6171eff27905A8490E4cdB711bc0AC77cb",
             "oracleStartBlock": 391525560
           },
@@ -65,7 +61,6 @@
             "address": "0xA0F8C84E78eabDF241A9fA9Ff6733AB17bB4E7FA",
             "startBlock": 391522593,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0x93c1b89D8F71E4688dEBDb688347A04eD91cfddd",
             "oracleStartBlock": 391525570
           },
@@ -74,7 +69,6 @@
             "address": "0x0B214413CAc3E0B8F356181d7339626FCafff6Bd",
             "startBlock": 391522593,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0xb543ffEF66c25409eA63Dc07352960f06Ce564c7",
             "oracleStartBlock": 391525577
           },
@@ -83,7 +77,6 @@
             "address": "0xa7f56bc3252c676E43Ff1F3e6780Dbbc7679D7a6",
             "startBlock": 391522593,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xf0B69ea67Ea6a8C7BE111B73f791ab25C386CaD3",
             "oracleStartBlock": 391525584
           },
@@ -92,7 +85,6 @@
             "address": "0x14954b6a207A4CC908f44354e61997070507fCC4",
             "startBlock": 391522593,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xC469d792421CD0eF585eab54EF93a6bF4623455E",
             "oracleStartBlock": 391525591
           },
@@ -101,7 +93,6 @@
             "address": "0x1aA55163E448b100ac4541C69cf2b55C909A2bE9",
             "startBlock": 391522593,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xD0A899a8Fe186D0c3beBD8A45a41cfbC30931105",
             "oracleStartBlock": 391525597
           },
@@ -110,7 +101,6 @@
             "address": "0x623Cf9E33F269Fd459467E98a5e12Db4C2FBCAe0",
             "startBlock": 391522593,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0xaaeF30A81c653520Ca5F43dea55b2d1E884946c0",
             "oracleStartBlock": 391525606
           },
@@ -119,7 +109,6 @@
             "address": "0xB4626C50fb6A0019FEECD442310cd1F7395e2148",
             "startBlock": 391522593,
             "decimals": 2,
-            "collateralFactorBps": 9000,
             "oracle": "0x15118b3d806b68aa5564A89f5f88C7DF9A8c6346",
             "oracleStartBlock": 391525612
           },
@@ -128,9 +117,96 @@
             "address": "0x8d55C23664B46212bC6dC03d03E237988c0d3646",
             "startBlock": 391522593,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xd50ee02F3BB2B4530C5FFB7df3284C9f2090b517",
             "oracleStartBlock": 391525620
+          },
+          {
+            "symbol": "bIB01",
+            "address": "0x43Db7FF630c993f080f315007961756f2b96Fa45",
+            "startBlock": 392460279,
+            "decimals": 18,
+            "oracle": "0x91ef3C500e54bEc320347dD3B34B4629931a6D7c",
+            "oracleStartBlock": 392469865
+          },
+          {
+            "symbol": "bCOIN",
+            "address": "0x2F7c95D1848cb0a5E36DE0D4Db04C4aFe09053dD",
+            "startBlock": 392460287,
+            "decimals": 18,
+            "oracle": "0xa1D47B6fd0527BcEf0bD61a000Ee2008ab397c3B",
+            "oracleStartBlock": 392469871
+          },
+          {
+            "symbol": "bCSPX",
+            "address": "0x618942aF15f2Fe6F451bEe0E094D46df39822e74",
+            "startBlock": 392460292,
+            "decimals": 18,
+            "oracle": "0xB34C0b04383094036B21Aefc4a955c32d104cfCa",
+            "oracleStartBlock": 392469876
+          },
+          {
+            "symbol": "bIBTA",
+            "address": "0xBf374ffDde61Ebf4e19dC0320BD2DeD9De447EB4",
+            "startBlock": 392460300,
+            "decimals": 18,
+            "oracle": "0x83C34109699045BCF0A91B522F0e25F96697158d",
+            "oracleStartBlock": 392469885
+          },
+          {
+            "symbol": "bHIGH",
+            "address": "0x88D873c00658874996E07E98E84fF89C3Aa314c1",
+            "startBlock": 392460304,
+            "decimals": 18,
+            "oracle": "0x84e2EBfE4B8c33D3BB0a6D28731db84d705C7817",
+            "oracleStartBlock": 392469893
+          },
+          {
+            "symbol": "bTSLA",
+            "address": "0x7E588B76807B0ADF014c4ceA3d9DF28d4C5E7c80",
+            "startBlock": 392460309,
+            "decimals": 18,
+            "oracle": "0x9A7434bDf1F96936eE485F57B4d777A3E348867C",
+            "oracleStartBlock": 392469903
+          },
+          {
+            "symbol": "bGOOGL",
+            "address": "0xc75DE9a3c001f6e5f45fb44a11fa7d92E82BAc0E",
+            "startBlock": 392460318,
+            "decimals": 18,
+            "oracle": "0x7A1D64d543Db151b8CCB18A8670a2F3467be6144",
+            "oracleStartBlock": 392469909
+          },
+          {
+            "symbol": "bNVDA",
+            "address": "0x479702c416cbbD2d95F0C5408a961f9870e6EEa5",
+            "startBlock": 392460323,
+            "decimals": 18,
+            "oracle": "0x20589BD02029700bCdF4Af70a63d8b8BB8A901e9",
+            "oracleStartBlock": 392469915
+          },
+          {
+            "symbol": "bMSFT",
+            "address": "0x7F7E97A31409ca29F1878E0d1B7068160834739B",
+            "startBlock": 392460329,
+            "decimals": 18,
+            "oracle": "0x97b989d67450cbAA292d96d841796EE5fcedEb2A",
+            "oracleStartBlock": 392469923
+          },
+          {
+            "symbol": "bGME",
+            "address": "0xE8484F0442707C3DaEC850be6e05a128100A00cD",
+            "startBlock": 392460344,
+            "decimals": 18,
+            "oracle": "0x1e6104a0177C2c3dD01E3BF940a21fF190F544c2",
+            "oracleStartBlock": 392469933
+          },
+          {
+            "symbol": "bZPR1",
+            "address": "0xc6466031bd2CD675D3fb7c7faD17eAF4a8403Fe7",
+            "startBlock": 392460350,
+            "decimals": 18,
+            "oracle": "0x7e58667d1C5a1cC2aC8c336Ed1b98A9bCc17Fe58",
+            "oracleStartBlock": 392469956
           }
         ]
       },
@@ -175,29 +251,25 @@
             "symbol": "USDC",
             "address": "0xe3BaB20B2711e0577C46d14fd10bfFC0961036C3",
             "startBlock": 36879070,
-            "decimals": 6,
-            "collateralFactorBps": 9000
+            "decimals": 6
           },
           {
             "symbol": "WETH",
             "address": "0xE29A9fBdf3d83c126C6366D7f401473Ab0850e7F",
             "startBlock": 36879070,
-            "decimals": 18,
-            "collateralFactorBps": 8000
+            "decimals": 18
           },
           {
             "symbol": "WBTC",
             "address": "0xEF0CeF5eB4F2B475b00C9Cae5E58065f9f5062E8",
             "startBlock": 36879070,
-            "decimals": 8,
-            "collateralFactorBps": 7000
+            "decimals": 8
           },
           {
             "symbol": "CADC",
             "address": "0xca03A4dFE09f664890ee7B46D9Af4F0B6d5f6f15",
             "startBlock": 37087631,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0x7B7a330EdC927CD77b41c198ac4fE25A6B5c2C3b",
             "oracleStartBlock": 37088282
           },
@@ -206,7 +278,6 @@
             "address": "0xED6Cfb1D2F61F75419BaB537Ca1C5351B6a4c017",
             "startBlock": 37087631,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xEDa712E6D5F0C989e9bdeEb8dadB2F4B4F54ACC5",
             "oracleStartBlock": 37088282
           },
@@ -215,7 +286,6 @@
             "address": "0xD773084B8Cd424AD87D35bE6901255feE285A763",
             "startBlock": 37087631,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0x43Db7FF630c993f080f315007961756f2b96Fa45",
             "oracleStartBlock": 37088282
           },
@@ -224,7 +294,6 @@
             "address": "0x1D7c9083d76aD235aE44d90Bc13EcA74Ccc2Ed42",
             "startBlock": 37087631,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0x2F7c95D1848cb0a5E36DE0D4Db04C4aFe09053dD",
             "oracleStartBlock": 37088282
           },
@@ -233,7 +302,6 @@
             "address": "0xB7e6d4119F5E482D8d68D0AA4c81F14A082Ec917",
             "startBlock": 37087631,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0x618942aF15f2Fe6F451bEe0E094D46df39822e74",
             "oracleStartBlock": 37088282
           },
@@ -242,7 +310,6 @@
             "address": "0xef49434AcC92ED24e7d245f748aacDE471A68F06",
             "startBlock": 37087631,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xBf374ffDde61Ebf4e19dC0320BD2DeD9De447EB4",
             "oracleStartBlock": 37088282
           },
@@ -251,7 +318,6 @@
             "address": "0x5F01296847f20Fc68C79D051AB75Fb9169096F00",
             "startBlock": 37087631,
             "decimals": 18,
-            "collateralFactorBps": 9000,
             "oracle": "0x88D873c00658874996E07E98E84fF89C3Aa314c1",
             "oracleStartBlock": 37088282
           },
@@ -260,7 +326,6 @@
             "address": "0x74Ae55CA4EaA2337f309F77A7AF1b60Ea9085FB6",
             "startBlock": 37087631,
             "decimals": 2,
-            "collateralFactorBps": 9000,
             "oracle": "0x7E588B76807B0ADF014c4ceA3d9DF28d4C5E7c80",
             "oracleStartBlock": 37088282
           },
@@ -269,9 +334,96 @@
             "address": "0xB2B60Bb1e9796cAE4Dc4c87f456db675871b0d2B",
             "startBlock": 37087631,
             "decimals": 6,
-            "collateralFactorBps": 9000,
             "oracle": "0xc75DE9a3c001f6e5f45fb44a11fa7d92E82BAc0E",
             "oracleStartBlock": 37088282
+          },
+          {
+            "symbol": "bIB01",
+            "address": "0x650776773016488249D90f5CE25bC2f87Bd037e4",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0xAC1680B08F0a1E9521910b8E807619a48E64430c",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bCOIN",
+            "address": "0x776E57A6411F734368360BA1c717F5d806CaE7a9",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0xAB6BCeD997cF2222a571158A9eC458FAaBD8377f",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bCSPX",
+            "address": "0x18178895c9Fb3b7a5f69295826d8F18Cc3B79453",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0xB383A3BAD722D80B4b0a575D8F8f5590D1c29898",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bIBTA",
+            "address": "0xBBA0Ba72349226ba2887583cD7078480B2f02c12",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x11952d652d6B943f91a127C19E9f1bA2bdCE4C85",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bHIGH",
+            "address": "0xf15bA231663f5351F3069C6C72fB117238D66047",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x772cb1a0A5B975AdDea8bd130832fd35dD803E52",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bTSLA",
+            "address": "0x2D85b61280CfaCb67ca97c874AeeF44Aab16Ba63",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x56e66eF165ba1854D1E7d42F9cac63f097B9fdcf",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bGOOGL",
+            "address": "0xdb21725DB0162bf173F41CEBFd5dd5a023b56363",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0xD7a93b1177Cfc512236670fDF50A6f92dFeE2355",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bNVDA",
+            "address": "0xaCc509f29746DE5ADf75007aBeb84aF3e101dDD7",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x4acB7B027D51868c2723bB6a1bdd0cC935B61379",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bMSFT",
+            "address": "0xAB0903D4BB2a7ecEB4cA88d74F3924c3fE0A8DC1",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x82F78Aec6aFE485E5c06480a786e308528D57C97",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bGME",
+            "address": "0x09490E9e625adc21DB63183e9BF43eD3F8630782",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x2a49D990B15B3c8b2Ca33BB352c0B9fc99e1Cb8D",
+            "oracleStartBlock": 37181447
+          },
+          {
+            "symbol": "bZPR1",
+            "address": "0xc79b05e2962C1d3d9f5FEFE7c5bde9097629989b",
+            "startBlock": 37181118,
+            "decimals": 18,
+            "oracle": "0x2469296eE5FAE005DC25Ed449F7fFf9eCA511Ebd",
+            "oracleStartBlock": 37181447
           }
         ]
       },

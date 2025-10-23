@@ -41,7 +41,7 @@ Ponder writes every entity to Postgres (`ponder.schema.ts`) and serves them via 
   - `updatedAtBlock`, `updatedAtTimestamp`
 - **Tokens (`tokens` table)**
   - symbol, name, decimals
-  - `collateralFactorBps`, `liquidationThresholdBps`
+  - `liquidationThresholdBps`
   - oracle feed metadata (`oracle`, `oracleStartBlock`)
 - **Oracle prices (`oracle_prices` table)** — latest price ray, source, block/timestamp
 - **Positions (`positions`, `position_collaterals`, `position_debts`)** — per-account collateral/debt values (ray) and health factor

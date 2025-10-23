@@ -127,7 +127,6 @@ type tokens {
   symbol: String!
   name: String
   decimals: Int!
-  collateralFactorBps: Int!
   liquidationThresholdBps: Int
   createdAtBlock: BigInt!
 }
@@ -199,14 +198,6 @@ input tokensFilter {
   decimals_lt: Int
   decimals_gte: Int
   decimals_lte: Int
-  collateralFactorBps: Int
-  collateralFactorBps_not: Int
-  collateralFactorBps_in: [Int]
-  collateralFactorBps_not_in: [Int]
-  collateralFactorBps_gt: Int
-  collateralFactorBps_lt: Int
-  collateralFactorBps_gte: Int
-  collateralFactorBps_lte: Int
   liquidationThresholdBps: Int
   liquidationThresholdBps_not: Int
   liquidationThresholdBps_in: [Int]
@@ -1067,6 +1058,10 @@ type positionSupplyEvents {
   action: String!
   amount: BigInt!
   usdValueRay: String!
+  supplyAprRay: String!
+  supplyApyRay: String!
+  borrowAprRay: String!
+  borrowApyRay: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   txHash: String!
@@ -1181,6 +1176,46 @@ input positionSupplyEventsFilter {
   usdValueRay_ends_with: String
   usdValueRay_not_starts_with: String
   usdValueRay_not_ends_with: String
+  supplyAprRay: String
+  supplyAprRay_not: String
+  supplyAprRay_in: [String]
+  supplyAprRay_not_in: [String]
+  supplyAprRay_contains: String
+  supplyAprRay_not_contains: String
+  supplyAprRay_starts_with: String
+  supplyAprRay_ends_with: String
+  supplyAprRay_not_starts_with: String
+  supplyAprRay_not_ends_with: String
+  supplyApyRay: String
+  supplyApyRay_not: String
+  supplyApyRay_in: [String]
+  supplyApyRay_not_in: [String]
+  supplyApyRay_contains: String
+  supplyApyRay_not_contains: String
+  supplyApyRay_starts_with: String
+  supplyApyRay_ends_with: String
+  supplyApyRay_not_starts_with: String
+  supplyApyRay_not_ends_with: String
+  borrowAprRay: String
+  borrowAprRay_not: String
+  borrowAprRay_in: [String]
+  borrowAprRay_not_in: [String]
+  borrowAprRay_contains: String
+  borrowAprRay_not_contains: String
+  borrowAprRay_starts_with: String
+  borrowAprRay_ends_with: String
+  borrowAprRay_not_starts_with: String
+  borrowAprRay_not_ends_with: String
+  borrowApyRay: String
+  borrowApyRay_not: String
+  borrowApyRay_in: [String]
+  borrowApyRay_not_in: [String]
+  borrowApyRay_contains: String
+  borrowApyRay_not_contains: String
+  borrowApyRay_starts_with: String
+  borrowApyRay_ends_with: String
+  borrowApyRay_not_starts_with: String
+  borrowApyRay_not_ends_with: String
   blockNumber: BigInt
   blockNumber_not: BigInt
   blockNumber_in: [BigInt]

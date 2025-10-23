@@ -103,6 +103,14 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
     blockTimestamp,
   });
 
+  const marketMetrics = await recalcMarketMetrics(db, {
+    chainId,
+    tokenAddress: token,
+    blockNumber,
+    blockTimestamp,
+    priceRay,
+  });
+
   const supplyEventId = `${positionId}:collateral:supply:${event.transaction.hash}:${event.log.logIndex}`;
   const collateralTokenId = tokenId(chainId, token);
   const supplyUsdRay = toUsdRay(amount, priceRay, tokenInfo.decimals);
@@ -118,6 +126,10 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
     action: "supply",
     amount,
     usdValueRay: supplyUsdRay,
+    supplyAprRay: marketMetrics.supplyAprRay,
+    supplyApyRay: marketMetrics.supplyApyRay,
+    borrowAprRay: marketMetrics.borrowAprRay,
+    borrowApyRay: marketMetrics.borrowApyRay,
     blockNumber,
     blockTimestamp,
     txHash: event.transaction.hash as `0x${string}`,
@@ -125,13 +137,6 @@ const handleSupplyCollateral = async ({ event, context }: HandlerArgs) => {
   });
 
   await refreshPositionMetrics(db, { positionId, blockNumber, blockTimestamp });
-  await recalcMarketMetrics(db, {
-    chainId,
-    tokenAddress: token,
-    blockNumber,
-    blockTimestamp,
-    priceRay,
-  });
 
   await updateDailyProtocolStats(db, {
     chainId,

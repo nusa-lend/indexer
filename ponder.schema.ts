@@ -16,7 +16,6 @@ export const tokens = onchainTable("tokens", (t) => ({
   symbol: t.text().notNull(),
   name: t.text(),
   decimals: t.integer().notNull(),
-  collateralFactorBps: t.integer().notNull(),
   liquidationThresholdBps: t.integer(),
   createdAtBlock: t.bigint().notNull(),
 }));
@@ -123,6 +122,10 @@ export const positionSupplyEvents = onchainTable("position_supply_events", (t) =
   action: t.text().notNull(),
   amount: t.bigint().notNull(),
   usdValueRay: t.text().notNull(),
+  supplyAprRay: t.text().notNull().default("0"),
+  supplyApyRay: t.text().notNull().default("0"),
+  borrowAprRay: t.text().notNull().default("0"),
+  borrowApyRay: t.text().notNull().default("0"),
   blockNumber: t.bigint().notNull(),
   blockTimestamp: t.bigint().notNull(),
   txHash: t.hex().notNull(),

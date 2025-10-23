@@ -7,7 +7,6 @@ export type TokenConfig = {
   address: `0x${string}`;
   startBlock?: number;
   decimals: number;
-  collateralFactorBps: number;
   oracle?: `0x${string}`;
   oracleStartBlock?: number;
 };

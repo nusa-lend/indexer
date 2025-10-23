@@ -28,7 +28,6 @@ type LendingConfig = {
         address: string;
         startBlock?: number;
         decimals: number;
-        collateralFactorBps: number;
         oracle?: string;
         oracleStartBlock?: number;
       }>;
